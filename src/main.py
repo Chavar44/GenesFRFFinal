@@ -1,26 +1,17 @@
-import os
-import pickle
-import random
-import threading
-import time
-import yaml
 import numpy as np
-import pandas as pd
 import config
 from sklearn.tree import BaseDecisionTree
-from distutils import dir_util
+from sklearn.ensemble import RandomForestRegressor
 
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.model_selection import train_test_split
 
 
 def import_data(path):
     """
-    This function loads the Data from a given path into a pandas data
+    This function loads the Data from a given path into a numpy array
 
     :param path: the path to the data given as tsv file
 
-    :return data: pd.Dataframe with data
+    :return data: numpy array with data
     """
     data = np.loadtxt(path, dtype=str, skiprows=1)[:, 1:].astype(float)
     return data
@@ -31,9 +22,9 @@ def simulate_different_hospitals(data):
     splits the data into a list of sub data to simulate different hospitals. The number of hospitals is given in the
     config.py file, as well if the dataset is split evenly
 
-    :param data: the data to be split, given as pd.DataFrame
+    :param data: the data to be split, given as numpy array
 
-    :return: the split data as a list of pd.DataFrames
+    :return: the split data as a list of numpy arrays
     """
     num_pat = data.shape[0]
     data_hospitals = []
@@ -85,10 +76,12 @@ def compute_feature_importance(estimator):
 
 def train_local_rf(local_data, number_genes):
     """
+    Trains the local random forrests for a individual hospital
 
-    :param local_data:
-    :param number_genes:
-    :return:
+    :param local_data: the local data for one hospital
+    :param number_genes: the number of genes in the dataset
+
+    :return: Either!!!! The local tree or the the local trained feature importances
     """
     # calculate RF/trees for each gene
     # Get the indices of the candidate regulators
@@ -120,10 +113,12 @@ def train_local_rf(local_data, number_genes):
 
 def train(data_hospitals, number_genes):
     """
+    Trains each local hospital dataset and calculates the global model
 
-    :param data_hospitals:
-    :param number_genes:
-    :return:
+    :param data_hospitals: local data from hospitals in a list of numpy arrays
+    :param number_genes: the number of genes in the dataset
+
+    :return: the Feature Importance of the global model
     """
     # train all local models
     local_random_forrests = []
@@ -156,7 +151,7 @@ def train(data_hospitals, number_genes):
     return VIM
 
 
-if __name__ == "main":
+if __name__ == '__main__':
     data = import_data(config.data_path)
     number_patients = data.shape[0]
     number_genes = data.shape[1]
