@@ -1,13 +1,14 @@
 from GENIE3 import *
 
-data_path = "../data/TCGA-COAD.htseq_fpkm.tsv"
+# data_path = "../data/TCGA-COAD.htseq_fpkm.tsv"
+data_path = "data.txt"
 
 # load example data
-data = loadtxt(data_path, dtype=str, skiprows=1)[:, 1:].astype(float)
-f = open(data_path)
+# data = loadtxt(data_path, dtype=str, skiprows=1)[:, 1:].astype(float)
+# f = open(data_path)
 
-#data = loadtxt("data.txt" ,skiprows=1)
-#f = open("data.txt")
+data = loadtxt("data.txt" ,skiprows=1)
+f = open("data.txt")
 gene_names = f.readline()
 f.close()
 gene_names = gene_names.rstrip('\n').split('\t')[1:]

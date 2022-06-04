@@ -16,39 +16,64 @@ from sklearn.model_selection import train_test_split
 
 def import_data(path):
     """
-    import data as Dataframe
-    :param path: str
-    :return data: pd.Dataframe
+    This function loads the Data from a given path into a pandas data
+
+    :param path: the path to the data given as tsv file
+
+    :return data: pd.Dataframe with data
     """
     data = np.loadtxt(path, dtype=str, skiprows=1)[:, 1:].astype(float)
     return data
 
 
-def split_data(data):
-    test_data = 0
-    train_data = 0
-    validation_data = 0
-    return test_data, train_data, validation_data
+def simulate_different_hospitals(data):
+    """
+    splits the data into a list of sub data to simulate different hospitals. The number of hospitals is given in the
+    config.py file, as well if the dataset is split evenly
 
+    :param data: the data to be split, given as pd.DataFrame
 
-def simulate_different_hospitals(data, num_pat):
+    :return: the split data as a list of pd.DataFrames
+    """
+    num_pat = data.shape[0]
     data_hospitals = []
     if config.split_even:
         num_pat_per_hospital = num_pat/config.number_of_hospitals
         for i in range(config.number_of_hospitals):
             data_hospitals.append(data[num_pat_per_hospital*i: num_pat_per_hospital*(i+1)])
     else:
-        # TODO: create unbalanced data set
-        pass
+        assert len(config.split_uneven) == config.number_of_hospitals
+        for i in range(config.number_of_hospitals):
+            end = len(data) * config.split_uneven[i]
+            if i == 0:
+                start = 0
+            else:
+                start = len(data) * config.split_uneven[i-1]
+            data_hospitals.append(data[int(start):int(end)])
     return data_hospitals
 
 
 def scaling_of_colums(data):
-    # scale the colums with unit variance
+    """
+    Scales the column of a column (gene) to unit variance over all patients
+
+    :param data: The data to be scaled (a column)
+
+    :return: the scaled data
+    """
+    # TODO: ImplementMe
+    # scale the columns with unit variance
     pass
 
 
 def compute_feature_importance(estimator):
+    """
+    Computes the feature importance of a tree estimator
+
+    :param estimator: the tree estimator as a trained RandomForestRegressor from sckitLearn
+
+    :return: the mean feature importance of a gene over all patients
+    """
     if isinstance(estimator, BaseDecisionTree):
         return estimator.tree_.compute_feature_importances(normalize=False)
     else:
@@ -58,11 +83,13 @@ def compute_feature_importance(estimator):
         return sum(importances, axis=0) / len(estimator)
 
 
-def separate_dataset(data):
-    pass
-
-
 def train_local_rf(local_data, number_genes):
+    """
+
+    :param local_data:
+    :param number_genes:
+    :return:
+    """
     # calculate RF/trees for each gene
     # Get the indices of the candidate regulators
     input_idx = list(range(number_genes))
@@ -92,6 +119,12 @@ def train_local_rf(local_data, number_genes):
 
 
 def train(data_hospitals, number_genes):
+    """
+
+    :param data_hospitals:
+    :param number_genes:
+    :return:
+    """
     # train all local models
     local_random_forrests = []
     for data in data_hospitals:
