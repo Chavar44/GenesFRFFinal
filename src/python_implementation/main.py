@@ -1,7 +1,8 @@
 import numpy as np
-import config
+from src.python_implementation import config
 from sklearn.tree import BaseDecisionTree
 from sklearn.ensemble import RandomForestRegressor
+from operator import itemgetter
 
 
 
@@ -29,9 +30,9 @@ def simulate_different_hospitals(data):
     num_pat = data.shape[0]
     data_hospitals = []
     if config.split_even:
-        num_pat_per_hospital = num_pat/config.number_of_hospitals
+        num_pat_per_hospital = num_pat / config.number_of_hospitals
         for i in range(config.number_of_hospitals):
-            data_hospitals.append(data[num_pat_per_hospital*i: num_pat_per_hospital*(i+1)])
+            data_hospitals.append(data[int(num_pat_per_hospital*i): int(num_pat_per_hospital*(i+1))])
     else:
         assert len(config.split_uneven) == config.number_of_hospitals
         for i in range(config.number_of_hospitals):
@@ -39,7 +40,7 @@ def simulate_different_hospitals(data):
             if i == 0:
                 start = 0
             else:
-                start = len(data) * config.split_uneven[i-1]
+                start = len(data) * config.split_uneven[i - 1]
             data_hospitals.append(data[int(start):int(end)])
     return data_hospitals
 
@@ -71,7 +72,7 @@ def compute_feature_importance(estimator):
         importances = [e.tree_.compute_feature_importances(normalize=False)
                        for e in estimator.estimators_]
         importances = np.array(importances)
-        return sum(importances, axis=0) / len(estimator)
+        return np.sum(importances, axis=0) / len(estimator)
 
 
 def train_local_rf(local_data, number_genes):
@@ -85,11 +86,12 @@ def train_local_rf(local_data, number_genes):
     """
     # calculate RF/trees for each gene
     # Get the indices of the candidate regulators
-    input_idx = list(range(number_genes))
+
     trees = []
     for i in range(number_genes):
-        print('Gene %d/%d...' % (i + 1, number_genes))
+        print('\tGene %d/%d...' % (i + 1, number_genes))
 
+        input_idx = list(range(number_genes))
         output = local_data[:, i]
 
         # Normalize output data to unit variance
@@ -122,7 +124,8 @@ def train(data_hospitals, number_genes):
     """
     # train all local models
     local_random_forrests = []
-    for data in data_hospitals:
+    for index, data in enumerate(data_hospitals):
+        print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
         local_random_forrests.append(train_local_rf(data, number_genes))
 
     # train global model
@@ -145,16 +148,89 @@ def train(data_hospitals, number_genes):
         # compute feature importance for one gene
         feature_importances = compute_feature_importance(global_rf)
         vi = np.zeros(number_genes)
-        vi[list(range(number_genes))] = feature_importances
+        input_idx = list(range(number_genes))
+        if i in input_idx:
+            input_idx.remove(i)
+        vi[input_idx] = feature_importances
         VIM[i, :] = vi
     VIM = np.transpose(VIM)
     return VIM
+
+
+def get_linked_list_federated(VIM):
+    file_name = None
+    gene_names = None
+    maxcount = 'all'
+    ngenes = VIM.shape[0]
+    input_idx = range(ngenes)
+    vInter = [(i, j, score) for (i, j), score in np.ndenumerate(VIM) if i in input_idx and i != j]
+
+    # Rank the list according to the weights of the edges
+    vInter_sort = sorted(vInter, key=itemgetter(2), reverse=True)
+    nInter = len(vInter_sort)
+
+    # Random permutation of edges with score equal to 0
+    flag = 1
+    i = 0
+    while flag and i < nInter:
+        (TF_idx, target_idx, score) = vInter_sort[i]
+        if score == 0:
+            flag = 0
+        else:
+            i += 1
+
+    if not flag:
+        items_perm = vInter_sort[i:]
+        items_perm = np.random.permutation(items_perm)
+        vInter_sort[i:] = items_perm
+
+    # Write the ranked list of edges
+    nToWrite = nInter
+    if isinstance(maxcount, int) and maxcount >= 0 and maxcount < nInter:
+        nToWrite = maxcount
+
+    if file_name:
+
+        outfile = open(file_name, 'w')
+
+        if gene_names is not None:
+            for i in range(nToWrite):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                outfile.write('%s\t%s\t%.6f\n' % (gene_names[TF_idx], gene_names[target_idx], score))
+        else:
+            for i in range(nToWrite):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                outfile.write('G%d\tG%d\t%.6f\n' % (TF_idx + 1, target_idx + 1, score))
+
+        outfile.close()
+
+    else:
+
+        if gene_names is not None:
+            for i in range(nToWrite):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                print('%s\t%s\t%.6f' % (gene_names[TF_idx], gene_names[target_idx], score))
+        else:
+            for i in range(nToWrite):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
 
 
 if __name__ == '__main__':
     data = import_data(config.data_path)
     number_patients = data.shape[0]
     number_genes = data.shape[1]
-    VIM = np.zeros((number_genes, number_genes))
+    hospital_data = simulate_different_hospitals(data)
+    vim = train(hospital_data, number_genes)
+    print(vim)
+
 
 

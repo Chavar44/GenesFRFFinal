@@ -16,6 +16,7 @@ gene_names = gene_names.rstrip('\n').split('\t')[1:]
 
 # run GENIE3
 VIM = GENIE3(data)
+print(VIM)
 
 
 # Genes that are used as candidate regulators

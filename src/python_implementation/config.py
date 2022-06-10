@@ -1,6 +1,7 @@
 # imports
 
-data_path = "../data/TCGA-COAD.htseq_fpkm.tsv"
+# data_path = "../../data/TCGA-COAD.htseq_fpkm.tsv"
+data_path = "/genie3/data.txt"
 
 number_trees = 500
 tree_method = "RF"
