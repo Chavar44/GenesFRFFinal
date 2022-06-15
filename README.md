@@ -3,9 +3,11 @@
 ## Task: 
 
 - Develop a federated version of GENIE3, building upon the above-mentioned federated random forest implementation.
-- [ ] Develop Feature Importance
+- [x] Develop Feature Importance
 - [ ] weighting of different "small" models
 - [ ] scaling: unit variance for each column
+- [ ] evaluation: AUC and ROC, f1-score sum_tau=1^n f1_score_at_tau
+- [ ] feature importance lokal berechnen
 
 ## Dataset:
 

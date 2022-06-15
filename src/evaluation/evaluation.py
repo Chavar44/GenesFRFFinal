@@ -8,6 +8,7 @@ data = import_data(data_path)
 # run GENIE3
 VIM_genie3 = GENIE3(data)
 
+# run federated method
 number_patients = data.shape[0]
 number_genes = data.shape[1]
 hospital_data = simulate_different_hospitals(data)

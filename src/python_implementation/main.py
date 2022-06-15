@@ -132,6 +132,7 @@ def train(data_hospitals, number_genes):
     # TODO: check again for logical errors
     VIM = np.zeros((number_genes, number_genes))
     for i in range(number_genes):
+        # TODO: remove instead have local feature importances
         global_rf = None
         for d in local_random_forrests:
             drf = d[i]
@@ -146,7 +147,9 @@ def train(data_hospitals, number_genes):
                 # global_rf.estimators_ += random.sample(drf.estimators_, trees)
                 global_rf.n_estimators += drf.n_estimators
         # compute feature importance for one gene
+        # TODO: move to local calculations
         feature_importances = compute_feature_importance(global_rf)
+        # TODO: calculate mean over all local feature importances
         vi = np.zeros(number_genes)
         input_idx = list(range(number_genes))
         if i in input_idx:
