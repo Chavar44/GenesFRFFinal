@@ -112,7 +112,7 @@ def train_local_rf(local_data, number_genes):
         # Learn ensemble of trees
         tree_estimator.fit(expr_data_input, output)
         trees.append(tree_estimator)
-<<<<<<< HEAD
+
     VIM = np.zeros((number_genes, number_genes))
 
     for i in range(number_genes):
@@ -127,11 +127,6 @@ def train_local_rf(local_data, number_genes):
     VIM = np.transpose(VIM)
 
     return VIM
-=======
-        local_feature_importance = compute_feature_importance(tree_estimator)
-
-    return trees
->>>>>>> 3b6b306 (test)
 
 
 def train(data_hospitals, number_genes, number_patients):
