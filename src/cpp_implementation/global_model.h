@@ -1,0 +1,14 @@
+//
+// Created by regine on 23.06.22.
+//
+
+#ifndef FEDERATED_INFERENCE_OF_GRNS_GLOBAL_MODEL_H
+#define FEDERATED_INFERENCE_OF_GRNS_GLOBAL_MODEL_H
+
+
+class global_model {
+
+};
+
+
+#endif //FEDERATED_INFERENCE_OF_GRNS_GLOBAL_MODEL_H

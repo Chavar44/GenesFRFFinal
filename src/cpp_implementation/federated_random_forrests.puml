@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class train_local{
+    -data
+    -random_forrest
+    -feature_importance_matrix
+    +train_local_forrest()
+    -calculate_feature_importance()
+    +save_feature_importances()
+}
+
+class global_model{
+    -local_feature_importances
+    -global_feature_importance
+    +calculate_global_feature_importances()
+    +get_linked_list()
+}
+
+interface utils{
+    +load_data()
+    + simulate_hospitals()
+}
+
+global_model --* train_local
+
+note "Parallelization in each gene, by training local forrests" as N1
+train_local .. N1
+@enduml

@@ -1,0 +1,14 @@
+//
+// Created by regine on 23.06.22.
+//
+
+#ifndef FEDERATED_INFERENCE_OF_GRNS_TRAIN_LOCAL_H
+#define FEDERATED_INFERENCE_OF_GRNS_TRAIN_LOCAL_H
+
+
+class train_local {
+
+};
+
+
+#endif //FEDERATED_INFERENCE_OF_GRNS_TRAIN_LOCAL_H
