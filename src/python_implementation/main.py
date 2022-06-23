@@ -41,7 +41,6 @@ def simulate_different_hospitals(data):
             else:
                 start = len(data) * config.split_uneven[i - 1]
             data_hospitals.append(data[int(start):int(end)])
-    print(data_hospitals)
     return data_hospitals
 
 
@@ -82,7 +81,7 @@ def train_local_rf(local_data, number_genes):
     :param local_data: the local data for one hospital
     :param number_genes: the number of genes in the dataset
 
-    :return: Either!!!! The local tree or the the local trained feature importances
+    :return: Either!!!! The local tree or the local trained feature importances
     """
     # calculate RF/trees for each gene
     # Get the indices of the candidate regulators
@@ -93,12 +92,10 @@ def train_local_rf(local_data, number_genes):
 
         input_idx = list(range(number_genes))
         output = local_data[:, i]
-        #print("std ",i,": ",np.std(output))
 
         # Normalize output data to unit variance
         # TODO: unit variance must be over whole dataset
         output = output / np.std(output)
-
 
         # Remove target gene from candidate regulators
         input_idx = input_idx[:]
@@ -113,20 +110,23 @@ def train_local_rf(local_data, number_genes):
         tree_estimator.fit(expr_data_input, output)
         trees.append(tree_estimator)
 
-    VIM = np.zeros((number_genes, number_genes))
+    # calculate feature importance
+    feature_importance_matrix = np.zeros((number_genes, number_genes))
 
+    # calculate the feature importance for each gene
     for i in range(number_genes):
-        feature_importances = compute_feature_importance(trees[i])
+        feature_importance = compute_feature_importance(trees[i])
         vi = np.zeros(number_genes)
         input_idx = list(range(number_genes))
         if i in input_idx:
             input_idx.remove(i)
-        vi[input_idx] = feature_importances
-        VIM[i, :] = vi
+        vi[input_idx] = feature_importance
+        # put feature importance into matrix
+        feature_importance_matrix[i, :] = vi
 
-    VIM = np.transpose(VIM)
+    feature_importance_matrix = np.transpose(feature_importance_matrix)
 
-    return VIM
+    return feature_importance_matrix
 
 
 def train(data_hospitals, number_genes, number_patients):
@@ -145,37 +145,17 @@ def train(data_hospitals, number_genes, number_patients):
         print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
         local_feature_importances.append(train_local_rf(data, number_genes))
 
-    number_of_hospitals = config.number_of_hospitals
-
-    #Unit variance calculation
-
+    # Unit variance calculation
     # TODO: change unit variance implementation
-    """
-    Had to try a simple approach :P
-    But it didnt work at all
-    t = 0
-    while t < number_of_hospitals:
-        local_std = np.std(local_feature_importances[t])
-        local_feature_importances[t] = local_feature_importances[t]/local_std
-        t = t+1
-    """
+
     # Calculate the weight of the data of each Hospital
+    VIM = np.zeros(local_feature_importances[0].shape)
     if config.split_even:
-        data_importance = np.full((number_of_hospitals), (1/number_of_hospitals))
+        VIM = np.mean(np.asarray(local_feature_importances), axis=0)
     else:
-        data_importance = config.split_uneven
         # TODO: Adjust to calculate splits without inside knowledge
-        #for i in range(number_of_hospitals):
-            #data_importance[i] = Ammount_of_Patients[i]/number_patients
-
-    #Calculating the Final feature importance Matrix
-    t = 1
-    VIM = local_feature_importances[0] * data_importance[0]
-    while t < number_of_hospitals:
-        Mtemp = local_feature_importances[t]
-        VIM = VIM + (Mtemp * data_importance[t])
-        t = t+1
-
+        for i in range(0, len(local_feature_importances)):
+            VIM = VIM + (local_feature_importances[i] * config.split_uneven[i])
     return VIM
 
 
@@ -251,5 +231,5 @@ if __name__ == '__main__':
     number_patients = data.shape[0]
     number_genes = data.shape[1]
     hospital_data = simulate_different_hospitals(data)
-    vim = train(hospital_data, number_genes,number_patients)
+    vim = train(hospital_data, number_genes, number_patients)
     print(vim)
