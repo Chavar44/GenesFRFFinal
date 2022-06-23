@@ -5,7 +5,6 @@ from sklearn.ensemble import RandomForestRegressor
 from operator import itemgetter
 
 
-
 def import_data(path):
     """
     This function loads the Data from a given path into a numpy array
@@ -32,7 +31,7 @@ def simulate_different_hospitals(data):
     if config.split_even:
         num_pat_per_hospital = num_pat / config.number_of_hospitals
         for i in range(config.number_of_hospitals):
-            data_hospitals.append(data[int(num_pat_per_hospital*i): int(num_pat_per_hospital*(i+1))])
+            data_hospitals.append(data[int(num_pat_per_hospital * i): int(num_pat_per_hospital * (i + 1))])
     else:
         assert len(config.split_uneven) == config.number_of_hospitals
         for i in range(config.number_of_hospitals):
@@ -42,6 +41,7 @@ def simulate_different_hospitals(data):
             else:
                 start = len(data) * config.split_uneven[i - 1]
             data_hospitals.append(data[int(start):int(end)])
+    print(data_hospitals)
     return data_hospitals
 
 
@@ -93,10 +93,12 @@ def train_local_rf(local_data, number_genes):
 
         input_idx = list(range(number_genes))
         output = local_data[:, i]
+        #print("std ",i,": ",np.std(output))
 
         # Normalize output data to unit variance
         # TODO: unit variance must be over whole dataset
         output = output / np.std(output)
+
 
         # Remove target gene from candidate regulators
         input_idx = input_idx[:]
@@ -110,10 +112,24 @@ def train_local_rf(local_data, number_genes):
         # Learn ensemble of trees
         tree_estimator.fit(expr_data_input, output)
         trees.append(tree_estimator)
-    return trees
+
+    VIM = np.zeros((number_genes, number_genes))
+
+    for i in range(number_genes):
+        feature_importances = compute_feature_importance(trees[i])
+        vi = np.zeros(number_genes)
+        input_idx = list(range(number_genes))
+        if i in input_idx:
+            input_idx.remove(i)
+        vi[input_idx] = feature_importances
+        VIM[i, :] = vi
+
+    VIM = np.transpose(VIM)
+
+    return VIM
 
 
-def train(data_hospitals, number_genes):
+def train(data_hospitals, number_genes, number_patients):
     """
     Trains each local hospital dataset and calculates the global model
 
@@ -123,40 +139,43 @@ def train(data_hospitals, number_genes):
     :return: the Feature Importance of the global model
     """
     # train all local models
-    local_random_forrests = []
+    local_feature_importances = []
+
     for index, data in enumerate(data_hospitals):
         print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
-        local_random_forrests.append(train_local_rf(data, number_genes))
+        local_feature_importances.append(train_local_rf(data, number_genes))
 
-    # train global model
-    # TODO: check again for logical errors
-    VIM = np.zeros((number_genes, number_genes))
-    for i in range(number_genes):
-        # TODO: remove instead have local feature importances
-        global_rf = None
-        for d in local_random_forrests:
-            drf = d[i]
+    number_of_hospitals = config.number_of_hospitals
 
-            if global_rf is None:
-                global_rf = drf
-                global_rf.estimators_ = drf.estimators_
-                # global_rf.estimators_ = random.sample(drf.estimators_, trees)
-                global_rf.n_estimators = drf.n_estimators
-            else:
-                global_rf.estimators_ += drf.estimators_
-                # global_rf.estimators_ += random.sample(drf.estimators_, trees)
-                global_rf.n_estimators += drf.n_estimators
-        # compute feature importance for one gene
-        # TODO: move to local calculations
-        feature_importances = compute_feature_importance(global_rf)
-        # TODO: calculate mean over all local feature importances
-        vi = np.zeros(number_genes)
-        input_idx = list(range(number_genes))
-        if i in input_idx:
-            input_idx.remove(i)
-        vi[input_idx] = feature_importances
-        VIM[i, :] = vi
-    VIM = np.transpose(VIM)
+    #Unit variance calculation
+
+    # TODO: change unit variance implementation
+    """
+    Had to try a simple approach :P
+    But it didnt work at all
+    t = 0
+    while t < number_of_hospitals:
+        local_std = np.std(local_feature_importances[t])
+        local_feature_importances[t] = local_feature_importances[t]/local_std
+        t = t+1
+    """
+    # Calculate the weight of the data of each Hospital
+    if config.split_even:
+        data_importance = np.full((number_of_hospitals), (1/number_of_hospitals))
+    else:
+        data_importance = config.split_uneven
+        # TODO: Adjust to calculate splits without inside knowledge
+        #for i in range(number_of_hospitals):
+            #data_importance[i] = Ammount_of_Patients[i]/number_patients
+
+    #Calculating the Final feature importance Matrix
+    t = 1
+    VIM = local_feature_importances[0] * data_importance[0]
+    while t < number_of_hospitals:
+        Mtemp = local_feature_importances[t]
+        VIM = VIM + (Mtemp * data_importance[t])
+        t = t+1
+
     return VIM
 
 
@@ -232,8 +251,5 @@ if __name__ == '__main__':
     number_patients = data.shape[0]
     number_genes = data.shape[1]
     hospital_data = simulate_different_hospitals(data)
-    vim = train(hospital_data, number_genes)
+    vim = train(hospital_data, number_genes,number_patients)
     print(vim)
-
-
-
