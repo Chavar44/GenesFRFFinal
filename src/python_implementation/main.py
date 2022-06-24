@@ -44,17 +44,32 @@ def simulate_different_hospitals(data):
     return data_hospitals
 
 
-def scaling_of_colums(data):
+def calculate_mean_local(data):
+    return np.mean(data, axis=0)
+
+
+def calculate_std_local(data, global_mean):
+    return np.mean((data-global_mean)**2, axis=0)
+
+
+def scaling_of_colums(data, num_genes):
     """
-    Scales the column of a column (gene) to unit variance over all patients
+    calculates the std in a federated way, for the scaling to unit variance
 
     :param data: The data to be scaled (a column)
 
-    :return: the scaled data
+    :return: the std
     """
-    # TODO: ImplementMe
-    # scale the columns with unit variance
-    pass
+    mean_local = np.zeros((len(data), num_genes))
+    for i in range(len(data)):
+        mean_local[i] = calculate_mean_local(data[i])
+    mean_global = np.mean(mean_local, axis=0)
+
+    std_local = np.zeros((len(data), num_genes))
+    for i in range(len(data)):
+        std_local[i] = calculate_std_local(data[i], mean_global)
+    std_global = np.mean(std_local, axis=0)
+    return np.sqrt(std_global)
 
 
 def compute_feature_importance(estimator):
@@ -74,7 +89,7 @@ def compute_feature_importance(estimator):
         return np.sum(importances, axis=0) / len(estimator)
 
 
-def train_local_rf(local_data, number_genes):
+def train_local_rf(local_data, number_genes, std_federated):
     """
     Trains the local random forrests for a individual hospital
 
@@ -95,7 +110,7 @@ def train_local_rf(local_data, number_genes):
 
         # Normalize output data to unit variance
         # TODO: unit variance must be over whole dataset
-        output = output / np.std(output)
+        output = output / std_federated[i]
 
         # Remove target gene from candidate regulators
         input_idx = input_idx[:]
@@ -141,9 +156,11 @@ def train(data_hospitals, number_genes, number_patients):
     # train all local models
     local_feature_importances = []
 
+    std_federated = scaling_of_colums(data_hospitals, number_genes)
+
     for index, data in enumerate(data_hospitals):
         print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
-        local_feature_importances.append(train_local_rf(data, number_genes))
+        local_feature_importances.append(train_local_rf(data, number_genes, std_federated))
 
     # Unit variance calculation
     # TODO: change unit variance implementation
