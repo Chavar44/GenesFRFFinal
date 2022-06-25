@@ -177,8 +177,6 @@ def train(data_hospitals, number_genes, number_patients):
 
 
 def get_linked_list_federated(VIM):
-    file_name = None
-    gene_names = None
     maxcount = 'all'
     ngenes = VIM.shape[0]
     input_idx = range(ngenes)
@@ -208,39 +206,12 @@ def get_linked_list_federated(VIM):
     if isinstance(maxcount, int) and maxcount >= 0 and maxcount < nInter:
         nToWrite = maxcount
 
-    if file_name:
-
-        outfile = open(file_name, 'w')
-
-        if gene_names is not None:
-            for i in range(nToWrite):
-                (TF_idx, target_idx, score) = vInter_sort[i]
-                TF_idx = int(TF_idx)
-                target_idx = int(target_idx)
-                outfile.write('%s\t%s\t%.6f\n' % (gene_names[TF_idx], gene_names[target_idx], score))
-        else:
-            for i in range(nToWrite):
-                (TF_idx, target_idx, score) = vInter_sort[i]
-                TF_idx = int(TF_idx)
-                target_idx = int(target_idx)
-                outfile.write('G%d\tG%d\t%.6f\n' % (TF_idx + 1, target_idx + 1, score))
-
-        outfile.close()
-
-    else:
-
-        if gene_names is not None:
-            for i in range(nToWrite):
-                (TF_idx, target_idx, score) = vInter_sort[i]
-                TF_idx = int(TF_idx)
-                target_idx = int(target_idx)
-                print('%s\t%s\t%.6f' % (gene_names[TF_idx], gene_names[target_idx], score))
-        else:
-            for i in range(nToWrite):
-                (TF_idx, target_idx, score) = vInter_sort[i]
-                TF_idx = int(TF_idx)
-                target_idx = int(target_idx)
-                print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
+    for i in range(nToWrite):
+        (TF_idx, target_idx, score) = vInter_sort[i]
+        TF_idx = int(TF_idx)
+        target_idx = int(target_idx)
+        print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
+    return vInter_sort
 
 
 if __name__ == '__main__':
@@ -250,3 +221,4 @@ if __name__ == '__main__':
     hospital_data = simulate_different_hospitals(data)
     vim = train(hospital_data, number_genes, number_patients)
     print(vim)
+    get_linked_list_federated(vim)
