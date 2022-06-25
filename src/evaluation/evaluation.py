@@ -36,8 +36,10 @@ number_patients = data.shape[0]
 number_genes = data.shape[1]
 hospital_data = simulate_different_hospitals(data)
 vim_federated = train(hospital_data, number_genes, number_patients)
+# save VIM's
+np.savetxt('VIM_genie3.csv', VIM_genie3, delimiter=',')
+np.savetxt('VIM_federated.csv', vim_federated, delimiter=',')
 
-# TODO: save both VIM
 mse = mean_squared_error(VIM_genie3, vim_federated)
 print("The mse of the two VIM-matrices is: %s" % mse)
 
@@ -63,4 +65,5 @@ plt.plot(x, recall, label='recall')
 plt.plot(x, f1, label='f1')
 plt.legend()
 plt.xlabel("Number of edges selected")
+plt.savefig("precision_recall_f1_scores")
 plt.show()
