@@ -3,6 +3,7 @@ from src.python_implementation.main import *
 from sklearn.metrics import *
 import numpy as np
 from matplotlib import pyplot as plt
+import time
 
 
 def calculate_confusion_matrix(edges_genie3, edges_federated, num_total):
@@ -26,16 +27,19 @@ def calculate_confusion_matrix(edges_genie3, edges_federated, num_total):
 
 data_path = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/genie3/data.txt"
 data = import_data(data_path)
-threshold = 0.01
 
 # run GENIE3
+start_genie3 = time.time()
 VIM_genie3 = GENIE3(data)
+end_genie3 = time.time()
 
 # run federated method
 number_patients = data.shape[0]
 number_genes = data.shape[1]
 hospital_data = simulate_different_hospitals(data)
+start_federated = time.time()
 vim_federated = train(hospital_data, number_genes, number_patients)
+end_federated = time.time()
 # save VIM's
 np.savetxt('VIM_genie3.csv', VIM_genie3, delimiter=',')
 np.savetxt('VIM_federated.csv', vim_federated, delimiter=',')
@@ -67,3 +71,8 @@ plt.legend()
 plt.xlabel("Number of edges selected")
 plt.savefig("precision_recall_f1_scores")
 plt.show()
+
+f = open('times.txt', 'w')
+f.write("Time Genie3 takes: %s\n Time the federated approach takes: %s" % (
+        (end_genie3 - start_genie3), (end_federated - start_federated)))
+f.close()
