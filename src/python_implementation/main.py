@@ -14,7 +14,7 @@ def import_data(path):
     :return data: numpy array with data
     """
     data = np.loadtxt(path, dtype=str, skiprows=1)[:, 1:].astype(float)
-    return data
+    return data.T
 
 
 def simulate_different_hospitals(data):
@@ -49,7 +49,7 @@ def calculate_mean_local(data):
 
 
 def calculate_std_local(data, global_mean):
-    return np.mean((data-global_mean)**2, axis=0)
+    return np.mean((data - global_mean) ** 2, axis=0)
 
 
 def scaling_of_colums(data, num_genes):
@@ -89,28 +89,71 @@ def compute_feature_importance(estimator):
         return np.sum(importances, axis=0) / len(estimator)
 
 
-def train_local_rf(local_data, number_genes, std_federated):
-    """
-    Trains the local random forrests for a individual hospital
+def train_local_rf(local_data, std_federated, gene_names=None, regulators='all'):
+    """Trains the local random forests for an individual hospital
 
-    :param local_data: the local data for one hospital
-    :param number_genes: the number of genes in the dataset
+    Parameters
+    ----------
+    local_data:
+        the local data for one hospital
 
-    :return: Either!!!! The local tree or the local trained feature importances
+    std_federated: np.array
+        standard variances for each gene to calculate the unit variance
+
+    gene_names: 
+        list of strings, optional List of length p, where p is the number of columns in expr_data,
+        containing the names of the genes. The i-th item of gene_names must correspond to the i-th column of expr_data.
+
+    regulators:
+        list of strings, optional List containing the names of the candidate regulators. When a list of
+        regulators is provided, the names of all the genes must be provided (in gene_names). When regulators is set to
+        'all', any gene can be a candidate regulator. default: 'all'
+
+    Returns
+    -------
+        The local trained feature importances
     """
-    # calculate RF/trees for each gene
-    # Get the indices of the candidate regulators
+
+    # TODO: check input
+    if not isinstance(local_data, np.ndarray):
+        raise ValueError(
+            'expr_data must be an array in which each row corresponds to a condition/sample and each column '
+            'corresponds to a gene') 
+
+    number_genes = local_data.shape[1]
+
+    if gene_names is not None:
+        if not isinstance(gene_names, (list, tuple)):
+            raise ValueError('input argument gene_names must be a list of gene names')
+        elif len(gene_names) != number_genes:
+            raise ValueError(
+                'input argument gene_names must be a list of length p, where p is the number of columns/genes in the '
+                'expr_data') 
+
+    if regulators != 'all':
+        if not isinstance(regulators, (list, tuple)):
+            raise ValueError('input argument regulators must be a list of gene names')
+
+        if gene_names is None:
+            raise ValueError('the gene names must be specified (in input argument gene_names)')
+        else:
+            s_intersection = set(gene_names).intersection(set(regulators))
+            if not s_intersection:
+                raise ValueError('the genes must contain at least one candidate regulator')
 
     trees = []
     for i in range(number_genes):
         print('\tGene %d/%d...' % (i + 1, number_genes))
 
-        input_idx = list(range(number_genes))
         output = local_data[:, i]
 
-        # Normalize output data to unit variance
-        # TODO: unit variance must be over whole dataset
         output = output / std_federated[i]
+
+        # calculation of the indexes to be checked
+        if regulators == 'all':
+            input_idx = list(range(number_genes))
+        else:
+            input_idx = [i for i, gene in enumerate(gene_names) if gene in regulators]
 
         # Remove target gene from candidate regulators
         input_idx = input_idx[:]
@@ -144,26 +187,37 @@ def train_local_rf(local_data, number_genes, std_federated):
     return feature_importance_matrix
 
 
-def train(data_hospitals, number_genes, number_patients):
-    """
-    Trains each local hospital dataset and calculates the global model
+def train(data_hospitals, gene_names=None, regulators='all'):
+    """Trains each local hospital dataset and calculates the global model
 
-    :param data_hospitals: local data from hospitals in a list of numpy arrays
-    :param number_genes: the number of genes in the dataset
+    Parameters
+    ----------
+    data_hospitals:
+        local data from hospitals in a list of numpy arrays
 
-    :return: the Feature Importance of the global model
+    gene_names: list of strings, optional
+        List of length p, where p is the number of columns in expr_data, containing the names of the genes. The i-th item of gene_names must correspond to the i-th column of expr_data.
+        default: None
+
+    regulators: list of strings, optional
+        List containing the names of the candidate regulators. When a list of regulators is provided, the names of all the genes must be provided (in gene_names). When regulators is set to 'all', any gene can be a candidate regulator.
+        default: 'all'
+
+    Returns
+    -------
+        the Feature Importance of the global model
     """
+    # TODO: check input!
     # train all local models
     local_feature_importances = []
+
+    number_genes = data_hospitals[0].shape[1]
 
     std_federated = scaling_of_colums(data_hospitals, number_genes)
 
     for index, data in enumerate(data_hospitals):
         print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
-        local_feature_importances.append(train_local_rf(data, number_genes, std_federated))
-
-    # Unit variance calculation
-    # TODO: change unit variance implementation
+        local_feature_importances.append(train_local_rf(data, std_federated, gene_names, regulators))
 
     # Calculate the weight of the data of each Hospital
     VIM = np.zeros(local_feature_importances[0].shape)
@@ -176,7 +230,7 @@ def train(data_hospitals, number_genes, number_patients):
     return VIM
 
 
-def get_linked_list_federated(VIM):
+def get_linked_list_federated(VIM, printing):
     maxcount = 'all'
     ngenes = VIM.shape[0]
     input_idx = range(ngenes)
@@ -206,19 +260,10 @@ def get_linked_list_federated(VIM):
     if isinstance(maxcount, int) and maxcount >= 0 and maxcount < nInter:
         nToWrite = maxcount
 
-    for i in range(nToWrite):
-        (TF_idx, target_idx, score) = vInter_sort[i]
-        TF_idx = int(TF_idx)
-        target_idx = int(target_idx)
-        print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
+    if printing:
+        for i in range(nToWrite):
+            (TF_idx, target_idx, score) = vInter_sort[i]
+            TF_idx = int(TF_idx)
+            target_idx = int(target_idx)
+            print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
     return vInter_sort
-
-
-if __name__ == '__main__':
-    data = import_data(config.data_path)
-    number_patients = data.shape[0]
-    number_genes = data.shape[1]
-    hospital_data = simulate_different_hospitals(data)
-    vim = train(hospital_data, number_genes, number_patients)
-    print(vim)
-    get_linked_list_federated(vim)
