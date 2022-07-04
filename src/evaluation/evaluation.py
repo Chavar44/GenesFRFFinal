@@ -5,24 +5,25 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 import logging
+import subprocess
+import src.python_implementation.config as config
+import os
 
 log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_fmt)
-
 logger = logging.getLogger(__name__)
 
-# data_path = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/genie3/data.txt"
-# TODO load transkription factors (DONE only in Genie3.R)
+
 logger.info('Loading Dataset')
-data_path = 'C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/TCGA-COAD.htseq_fpkm.tsv'
-data = import_data(data_path)
-data = data[:,:80]
+data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
+# data = data[:, :80]
 
 # run GENIE3
-# TODO run with R and save VIM correct on filesystem
 logger.info('Run Genie3')
 start_genie3 = time.time()
-#VIM_genie3 = GENIE3(data)
+cmd = ['Rscript', config.path_to_genie3_R]
+x = subprocess.check_output(cmd, universal_newlines=True)
+logger.info('Terminated Genie3 with exit code ', x)
 end_genie3 = time.time()
 
 # run federated method
@@ -31,29 +32,21 @@ hospital_data = simulate_different_hospitals(data)
 start_federated = time.time()
 vim_federated = train(hospital_data)
 end_federated = time.time()
-
-# TODO load VIM matrix from R genie3  (DONE!)
-path = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/src/evaluation/WeightMatrix.csv"
-VIM_genie3 = np.loadtxt(path, dtype=str, skiprows=1, delimiter=",")[:, :].astype(float)
-
-
-# save VIM's
-logger.info('saving VIM-matrices')
-
-np.savetxt('VIM_genie3.csv', VIM_genie3, delimiter=',')
-
+# save VIM federated
+logger.info('saving VIM-matrix from federated approach')
 np.savetxt('VIM_federated.csv', vim_federated, delimiter=',')
 
+logger.info('loading VIM matrix from Genie3')
+path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
+VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
 
 logger.info('calculate mse')
 mse = mean_squared_error(VIM_genie3, vim_federated)
 print("The mse of the two VIM-matrices is: %s" % mse)
 
 logger.info('get linked lists')
-print("Genie3:")
-edges_genie3 = get_linked_list_federated(VIM_genie3, printing=True)
-print("Federated:")
-edges_federated = get_linked_list_federated(vim_federated, printing=True)
+edges_genie3 = get_linked_list_federated(VIM_genie3, printing=False)
+edges_federated = get_linked_list_federated(vim_federated, printing=False)
 
 logger.info('calculate precision, recall and f1 score')
 f1 = [0]

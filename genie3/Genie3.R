@@ -9,45 +9,44 @@ library(doRNG)
 
 set.seed(123)   #For reproducibility purposes
 
+data_path <- "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data"
+
+
 #Read File
-path = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/TCGA-COAD.htseq_fpkm.tsv"
-OGFile = read.table(path,fileEncoding="latin1",sep="\t")
+path <- paste0(data_path, "/TCGA-COAD.htseq_fpkm.tsv")
+data <- read.table(path, fileEncoding = "latin1", sep = "\t")
 
- #transpose matrix
-GeneT = t(OGFile)
-GeneT = t(GeneT)
-
-
+#transpose matrix
+data <- t(t(data))
 
 
 #Make the format readable by GENIE 3
-Dimensions = dim(GeneT)
-rownum = Dimensions[1]
-colnum = Dimensions[2]
+Dimensions <- dim(data)
+rownum <- Dimensions[1]
+colnum <- Dimensions[2]
 
-GeneT[1:rownum,1] = substr(GeneT[1:rownum],1,15) #Remove decimal points from Genes Ensembl id
+data[1:rownum, 1] = substr(data[1:rownum], 1, 15) #Remove decimal points from Genes Ensembl id
 
-rownames(GeneT) = GeneT[,1]
-colnames(GeneT) = GeneT[1,]
+rownames(data) <- data[, 1]
+colnames(data) <- data[1,]
 
 #Eliminate "Ensemble_Id" from the matrix
-GeneT[1,] = GeneT[2,]
-GeneT[,1] = GeneT[,2]
-GeneMat = GeneT[2:rownum,2:colnum] #Final Matrix
+data[1,] <- data[2,]
+data[, 1] <- data[, 2]
+data <- data[2:rownum, 2:colnum] #Final Matrix
 
 #Read Regulators
-path = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/Regulators.txt"
-Regulators = read.table(path,fileEncoding="latin1",sep="\n")
-Regulators = Regulators[,1]
+path <- paste0(data_path, "/Regulators.txt")
+Regulators <- read.table(path, fileEncoding = "latin1", sep = "\n")
+Regulators <- Regulators[, 1]
 
 #Implementation of GENIE3
-weightMat = GENIE3(GeneMat,verbose=TRUE, regulators = Regulators)
+weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE)
 
 #matrix export
-#exportpath = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/src/evaluation/Data.csv"
-#write.csv(Data,exportpath,row.names=FALSE)
-exportpath = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/src/evaluation/WeightMatrix.csv"
-write.csv(weightMat,exportpath,row.names=FALSE)
+export_path <- paste0(data_path, "/Weight_Matrix.csv")
+write.table(weightMat, exportpath, sep = ',', row.names = FALSE, col.names = FALSE)
+cat(0)
 
 
 
