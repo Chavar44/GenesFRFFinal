@@ -12,16 +12,17 @@ logging.basicConfig(level=logging.INFO, format=log_fmt)
 logger = logging.getLogger(__name__)
 
 # data_path = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/genie3/data.txt"
-# TODO load transkription factors
+# TODO load transkription factors (DONE only in Genie3.R)
 logger.info('Loading Dataset')
-data_path = '/media/sf_Projekt_BIONETS/federated-inference-of-grns/data/TCGA-COAD.htseq_fpkm.tsv'
+data_path = 'C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/TCGA-COAD.htseq_fpkm.tsv'
 data = import_data(data_path)
+data = data[:,:80]
 
 # run GENIE3
 # TODO run with R and save VIM correct on filesystem
 logger.info('Run Genie3')
 start_genie3 = time.time()
-VIM_genie3 = GENIE3(data)
+#VIM_genie3 = GENIE3(data)
 end_genie3 = time.time()
 
 # run federated method
@@ -31,19 +32,28 @@ start_federated = time.time()
 vim_federated = train(hospital_data)
 end_federated = time.time()
 
+# TODO load VIM matrix from R genie3  (DONE!)
+path = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/src/evaluation/WeightMatrix.csv"
+VIM_genie3 = np.loadtxt(path, dtype=str, skiprows=1, delimiter=",")[:, :].astype(float)
+
+
 # save VIM's
 logger.info('saving VIM-matrices')
+
 np.savetxt('VIM_genie3.csv', VIM_genie3, delimiter=',')
+
 np.savetxt('VIM_federated.csv', vim_federated, delimiter=',')
 
-# TODO load VIM matrix from R genie3
+
 logger.info('calculate mse')
 mse = mean_squared_error(VIM_genie3, vim_federated)
 print("The mse of the two VIM-matrices is: %s" % mse)
 
 logger.info('get linked lists')
-edges_genie3 = get_linked_list_federated(VIM_genie3, printing=False)
-edges_federated = get_linked_list_federated(vim_federated, printing=False)
+print("Genie3:")
+edges_genie3 = get_linked_list_federated(VIM_genie3, printing=True)
+print("Federated:")
+edges_federated = get_linked_list_federated(vim_federated, printing=True)
 
 logger.info('calculate precision, recall and f1 score')
 f1 = [0]
@@ -91,6 +101,6 @@ plt.savefig("precision_recall_f1_scores")
 plt.show()
 
 f = open('times.txt', 'w')
-f.write("Time Genie3 takes: %s\n Time the federated approach takes: %s" % (
+f.write("Time Genie3 takes: %s\nTime the federated approach takes: %s" % (
         (end_genie3 - start_genie3), (end_federated - start_federated)))
 f.close()
