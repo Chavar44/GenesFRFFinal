@@ -147,7 +147,8 @@ def train_local_rf(local_data, std_federated, gene_names=None, regulators='all')
 
         output = local_data[:, i]
 
-        output = output / std_federated[i]
+        if std_federated[i] != 0:
+            output = output / std_federated[i]
 
         # calculation of the indexes to be checked
         if regulators == 'all':

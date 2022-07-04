@@ -10,11 +10,11 @@ library(doRNG)
 set.seed(123)   #For reproducibility purposes
 
 #Read File
-path = "C:/HMDA/Proyecto Random Forest/genie3/TCGA-COAD.htseq_fpkm.tsv"
+path = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data/TCGA-COAD.htseq_fpkm.tsv"
 OGFile = read.table(path,fileEncoding="latin1",sep="\t")
 
 
-GeneT = t(OGFile) #transpose matrix
+GeneT = t(t(OGFile)) #transpose matrix
 
 
 
@@ -31,11 +31,13 @@ GeneT[1,] = GeneT[2,]
 GeneT[,1] = GeneT[,2]
 GeneMat = GeneT[2:rownum,2:colnum] #Final Matrix
 
+print('Running Genie3')
+
 #Implementation of GENIE3
-weightMat = GENIE3(GeneMat, treeMethod="ET", K=3, nTrees=3,nCores=2,verbose=TRUE)
+weightMat = GENIE3(GeneMat)
 
 #matrix export 
-exportpath = "C:/HMDA/WeightMatrix.csv"
+exportpath = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data/WeightMatrix.csv"
 write.table(weightMat,exportpath) 
 
 

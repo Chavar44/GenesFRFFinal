@@ -12,11 +12,13 @@ logging.basicConfig(level=logging.INFO, format=log_fmt)
 logger = logging.getLogger(__name__)
 
 # data_path = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/genie3/data.txt"
+# TODO load transkription factors
 logger.info('Loading Dataset')
 data_path = '/media/sf_Projekt_BIONETS/federated-inference-of-grns/data/TCGA-COAD.htseq_fpkm.tsv'
-data = import_data(data_path)[:, :50]
+data = import_data(data_path)
 
 # run GENIE3
+# TODO run with R and save VIM correct on filesystem
 logger.info('Run Genie3')
 start_genie3 = time.time()
 VIM_genie3 = GENIE3(data)
@@ -34,6 +36,7 @@ logger.info('saving VIM-matrices')
 np.savetxt('VIM_genie3.csv', VIM_genie3, delimiter=',')
 np.savetxt('VIM_federated.csv', vim_federated, delimiter=',')
 
+# TODO load VIM matrix from R genie3
 logger.info('calculate mse')
 mse = mean_squared_error(VIM_genie3, vim_federated)
 print("The mse of the two VIM-matrices is: %s" % mse)
