@@ -10,11 +10,13 @@ library(doRNG)
 set.seed(123)   #For reproducibility purposes
 
 #Read File
-path = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data/TCGA-COAD.htseq_fpkm.tsv"
+path = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/TCGA-COAD.htseq_fpkm.tsv"
 OGFile = read.table(path,fileEncoding="latin1",sep="\t")
 
+ #transpose matrix
+GeneT = t(OGFile)
+GeneT = t(GeneT)
 
-GeneT = t(t(OGFile)) #transpose matrix
 
 
 
@@ -22,6 +24,8 @@ GeneT = t(t(OGFile)) #transpose matrix
 Dimensions = dim(GeneT)
 rownum = Dimensions[1]
 colnum = Dimensions[2]
+
+GeneT[1:rownum,1] = substr(GeneT[1:rownum],1,15) #Remove decimal points from Genes Ensembl id
 
 rownames(GeneT) = GeneT[,1]
 colnames(GeneT) = GeneT[1,]
@@ -31,14 +35,19 @@ GeneT[1,] = GeneT[2,]
 GeneT[,1] = GeneT[,2]
 GeneMat = GeneT[2:rownum,2:colnum] #Final Matrix
 
-print('Running Genie3')
+#Read Regulators
+path = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/Regulators.txt"
+Regulators = read.table(path,fileEncoding="latin1",sep="\n")
+Regulators = Regulators[,1]
 
 #Implementation of GENIE3
-weightMat = GENIE3(GeneMat)
+weightMat = GENIE3(GeneMat,verbose=TRUE, regulators = Regulators)
 
-#matrix export 
-exportpath = "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data/WeightMatrix.csv"
-write.table(weightMat,exportpath) 
+#matrix export
+#exportpath = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/src/evaluation/Data.csv"
+#write.csv(Data,exportpath,row.names=FALSE)
+exportpath = "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/src/evaluation/WeightMatrix.csv"
+write.csv(weightMat,exportpath,row.names=FALSE)
 
 
 
