@@ -9,7 +9,7 @@ library(doRNG)
 
 set.seed(123)   #For reproducibility purposes
 
-data_path <- "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data"
+data_path <- "C:/HMDA/Proyecto Random Forest/repository/federated-inference-of-grns/genie3/"
 
 
 #Read File
@@ -45,7 +45,7 @@ weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE)
 
 #matrix export
 export_path <- paste0(data_path, "/Weight_Matrix.csv")
-write.table(weightMat, exportpath, sep = ',', row.names = FALSE, col.names = FALSE)
+write.table(weightMat, export_path, sep = ',', row.names = FALSE, col.names = FALSE)
 cat(0)
 
 
