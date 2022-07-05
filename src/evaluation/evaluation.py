@@ -21,9 +21,9 @@ data, gene_names, transcription_factors = import_data(config.data_path, config.p
 # run GENIE3
 logger.info('Run Genie3')
 start_genie3 = time.time()
-#cmd = ['Rscript', config.path_to_genie3_R]
-#x = subprocess.check_output(cmd, universal_newlines=True)
-#logger.info('Terminated Genie3 with exit code ', x)
+cmd = ['Rscript', config.path_to_genie3_R]
+x = subprocess.check_output(cmd, universal_newlines=True)
+logger.info('Terminated Genie3 with exit code ', x)
 end_genie3 = time.time()
 
 # run federated method
