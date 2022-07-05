@@ -16,10 +16,20 @@ def import_data(path, path_tf=None):
     """
     if path_tf is not None:
         data = np.loadtxt(path, dtype=str, skiprows=1)
-        gene_names = data[:, :1]
+
+        raw_gene_names = data[:, :1]
+        #Transform raw_gene_names into a list readable by the federated random forest approach
+        gene_names = []
+        for xs in raw_gene_names:
+            for x in xs:
+                gene_names.append(x[0:15]) #Only reads the first 15 characters in order to correctly compare to the Regulators.txt file
+
+
         data = data[:, 1:].astype(float)
+
         tf = np.loadtxt(path_tf, dtype=str)
-        return data.T, gene_names.tolist(), tf.tolist()
+
+        return data.T, gene_names, tf.tolist()
     else:
         data = np.loadtxt(path, dtype=str, skiprows=1)[:, 1:].astype(float)
         return data.T
