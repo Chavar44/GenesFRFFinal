@@ -41,11 +41,11 @@ Regulators <- read.table(path, fileEncoding = "latin1", sep = "\n")
 Regulators <- Regulators[, 1]
 
 #Implementation of GENIE3
-weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE)
+weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 50)
 
 #matrix export
 export_path <- paste0(data_path, "/Weight_Matrix.csv")
-write.table(weightMat, exportpath, sep = ',', row.names = FALSE, col.names = FALSE)
+write.table(weightMat, export_path, sep = ',', row.names = FALSE, col.names = FALSE)
 cat(0)
 
 
