@@ -13,28 +13,34 @@ log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_fmt)
 logger = logging.getLogger(__name__)
 
-
 logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
 # data = data[:, :80]
 
-# run GENIE3
-logger.info('Run Genie3')
-start_genie3 = time.time()
-cmd = ['Rscript', config.path_to_genie3_R]
-x = subprocess.check_output(cmd, universal_newlines=True)
-logger.info('Terminated Genie3 with exit code ', x)
-end_genie3 = time.time()
+if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")):
+    # run GENIE3
+    logger.info('Run Genie3')
+    start_genie3 = time.time()
+    cmd = ['Rscript', config.path_to_genie3_R]
+    x = subprocess.check_output(cmd, universal_newlines=True)
+    logger.info('Terminated Genie3 with exit code ', x)
+    end_genie3 = time.time()
 
-# run federated method
-logger.info('Run Federated Approach')
-hospital_data = simulate_different_hospitals(data)
-start_federated = time.time()
-vim_federated = train(hospital_data)
-end_federated = time.time()
-# save VIM federated
-logger.info('saving VIM-matrix from federated approach')
-np.savetxt('VIM_federated.csv', vim_federated, delimiter=',')
+if not os.path.exists():
+    # run federated method
+    logger.info('Run Federated Approach')
+    hospital_data = simulate_different_hospitals(data)
+    start_federated = time.time()
+    vim_federated = train(hospital_data)
+    end_federated = time.time()
+    # save VIM federated
+    logger.info('saving VIM-matrix from federated approach')
+    np.savetxt(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.csv"), vim_federated, delimiter=',')
+else:
+    # load federated vim matrix
+    logger.info('loading VIM matrix from the federated approach')
+    path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.csv")
+    VIM_genie3 = np.loadtxt(path_vim_matrix_federated, dtype=str, delimiter=",").astype(float)
 
 logger.info('loading VIM matrix from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")

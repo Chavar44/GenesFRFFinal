@@ -8,17 +8,22 @@ library(plyr)
 library(doRNG)
 
 set.seed(123)   #For reproducibility purposes
+args <- commandArgs(TRUE)
 
-data_path <- "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data"
+# data_path <- "/media/sf_Projekt_BIONETS/federated-inference-of-grns/data"
 
 
 #Read File
-path <- paste0(data_path, "/TCGA-COAD.htseq_fpkm.tsv")
+# path <- paste0(data_path, "/TCGA-COAD.htseq_fpkm.tsv")
+path <- args[1]
+if(is.na(path)){
+  print("No datapath given")
+  quit(status = 1)
+}
 data <- read.table(path, fileEncoding = "latin1", sep = "\t")
 
 #transpose matrix
 data <- t(t(data))
-
 
 #Make the format readable by GENIE 3
 Dimensions <- dim(data)
@@ -36,12 +41,12 @@ data[, 1] <- data[, 2]
 data <- data[2:rownum, 2:colnum] #Final Matrix
 
 #Read Regulators
-path <- paste0(data_path, "/Regulators.txt")
-Regulators <- read.table(path, fileEncoding = "latin1", sep = "\n")
+path_regulators <- args[2]
+Regulators <- read.table(path_regulators, fileEncoding = "latin1", sep = "\n")
 Regulators <- Regulators[, 1]
 
 #Implementation of GENIE3
-weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 50)
+weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 16)
 
 #matrix export
 export_path <- paste0(data_path, "/Weight_Matrix.csv")

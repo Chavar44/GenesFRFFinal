@@ -126,7 +126,7 @@ def train_local_rf(local_data, std_federated, gene_names=None, regulators='all')
     if not isinstance(local_data, np.ndarray):
         raise ValueError(
             'expr_data must be an array in which each row corresponds to a condition/sample and each column '
-            'corresponds to a gene') 
+            'corresponds to a gene')
 
     number_genes = local_data.shape[1]
 
@@ -136,7 +136,7 @@ def train_local_rf(local_data, std_federated, gene_names=None, regulators='all')
         elif len(gene_names) != number_genes:
             raise ValueError(
                 'input argument gene_names must be a list of length p, where p is the number of columns/genes in the '
-                'expr_data') 
+                'expr_data')
 
     if regulators != 'all':
         if not isinstance(regulators, (list, tuple)):
@@ -149,7 +149,9 @@ def train_local_rf(local_data, std_federated, gene_names=None, regulators='all')
             if not s_intersection:
                 raise ValueError('the genes must contain at least one candidate regulator')
 
-    trees = []
+    # feature importance matrix
+    feature_importance_matrix = np.zeros((number_genes, number_genes))
+
     for i in range(number_genes):
         print('\tGene %d/%d...' % (i + 1, number_genes))
 
@@ -175,18 +177,10 @@ def train_local_rf(local_data, std_federated, gene_names=None, regulators='all')
 
         # Learn ensemble of trees
         tree_estimator.fit(expr_data_input, output)
-        trees.append(tree_estimator)
 
-    # calculate feature importance
-    feature_importance_matrix = np.zeros((number_genes, number_genes))
-
-    # calculate the feature importance for each gene
-    for i in range(number_genes):
-        feature_importance = compute_feature_importance(trees[i])
+        # calculate the feature importance for each gene
+        feature_importance = compute_feature_importance(tree_estimator)
         vi = np.zeros(number_genes)
-        input_idx = list(range(number_genes))
-        if i in input_idx:
-            input_idx.remove(i)
         vi[input_idx] = feature_importance
         # put feature importance into matrix
         feature_importance_matrix[i, :] = vi
