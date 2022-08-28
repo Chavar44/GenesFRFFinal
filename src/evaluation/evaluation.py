@@ -15,23 +15,22 @@ logger = logging.getLogger(__name__)
 
 logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
-#data = data[:, :80]
 
 if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")):
     # run GENIE3
     logger.info('Run Genie3')
     start_genie3 = time.time()
-    cmd = ['Rscript', config.path_to_genie3_R]
+    cmd = ['Rscript', config.path_to_genie3_R, config.data_path, config.path_transcription_factors]
     x = subprocess.check_output(cmd, universal_newlines=True)
     logger.info('Terminated Genie3 with exit code ', x)
     end_genie3 = time.time()
 
-if not os.path.exists():
+if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.csv")):
     # run federated method
     logger.info('Run Federated Approach')
     hospital_data = simulate_different_hospitals(data)
     start_federated = time.time()
-    vim_federated = train(hospital_data)
+    vim_federated = train(hospital_data, gene_names=gene_names, regulators=transcription_factors)
     end_federated = time.time()
     # save VIM federated
     logger.info('saving VIM-matrix from federated approach')
