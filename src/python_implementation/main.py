@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 from src.python_implementation import config
 from sklearn.tree import BaseDecisionTree
@@ -219,8 +221,15 @@ def train(data_hospitals, gene_names=None, regulators='all'):
     std_federated = scaling_of_colums(data_hospitals, number_genes)
 
     for index, data in enumerate(data_hospitals):
-        print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
-        local_feature_importances.append(train_local_rf(data, std_federated, gene_names, regulators))
+        file_name = "VIM_H" + str(index + 1) + ".csv"
+        path = config.data_path_to_VIM_matrices
+        if os.path.exists(os.path.join(path, file_name)):
+            print('loading file: ' + file_name)
+            local_feature_importances.append(np.loadtxt(os.path.join(path, file_name), delimiter=','))
+        else:
+            print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
+            local_feature_importances.append(train_local_rf(data, std_federated, gene_names, regulators))
+            np.savetxt(os.path.join(path, file_name), local_feature_importances[index], delimiter=',')
 
     # Calculate the weight of the data of each Hospital
     VIM = np.zeros(local_feature_importances[0].shape)
