@@ -227,20 +227,22 @@ def train(data_hospitals, gene_names=None, regulators='all'):
     std_federated = scaling_of_colums(data_hospitals, number_genes)
 
     for index, data in enumerate(data_hospitals):
-        file_name = "VIM_H" + str(index + 1) + ".csv"
+        file_name = "VIM_H" + str(index + 1) + ".npy"
         path = config.data_path_to_VIM_matrices
         if os.path.exists(os.path.join(path, file_name)):
             print('loading file: ' + file_name)
-            local_feature_importances.append(np.loadtxt(os.path.join(path, file_name), delimiter=','))
+            local_feature_importances.append(np.load(os.path.join(path, file_name)))
         else:
             print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
             local_feature_importances.append(train_local_rf(data, std_federated, gene_names, regulators))
-            np.savetxt(os.path.join(path, file_name), local_feature_importances[index], delimiter=',')
+            np.save(os.path.join(path, file_name), local_feature_importances[index])
 
     # Calculate the weight of the data of each Hospital
     VIM = np.zeros(local_feature_importances[0].shape)
     if config.split_even:
-        VIM = np.mean(np.asarray(local_feature_importances), axis=0)
+        for i in range(len(local_feature_importances)):
+            VIM += local_feature_importances[i]
+        VIM /= len(local_feature_importances)
     else:
         # TODO: Adjust to calculate splits without inside knowledge
         for i in range(0, len(local_feature_importances)):

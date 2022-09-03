@@ -23,7 +23,7 @@ end_federated = time.time()
 
 # save VIM federated
 logger.info('saving VIM-matrix from federated approach')
-np.savetxt(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.csv"), vim_federated, delimiter=',')
+np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy"), vim_federated)
 
 # datetime object containing current date and time
 now = datetime.now()

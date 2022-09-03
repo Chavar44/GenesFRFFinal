@@ -38,8 +38,8 @@ if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federa
 else:
     # load federated vim matrix
     logger.info('loading VIM matrix from the federated approach')
-    path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.csv")
-    VIM_genie3 = np.loadtxt(path_vim_matrix_federated, dtype=str, delimiter=",").astype(float)
+    path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")
+    vim_federated = np.load(path_vim_matrix_federated).astype(float)
 
 logger.info('loading VIM matrix from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
