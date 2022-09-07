@@ -10,14 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 logger.info('Loading Dataset')
-# data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
 
 # run GENIE3
 logger.info('Run Genie3')
 start_genie3 = time.time()
 cmd = ['Rscript', config.path_to_genie3_R, config.data_path, config.path_transcription_factors]
 x = subprocess.check_output(cmd, universal_newlines=True)
-logger.info('Terminated Genie3 with exit code ', x)
+logger.info('Terminated Genie3 with exit code %s', x)
 end_genie3 = time.time()
 
 # datetime object containing current date and time

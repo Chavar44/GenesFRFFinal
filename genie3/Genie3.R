@@ -42,14 +42,26 @@ data <- data[2:rownum, 2:colnum] #Final Matrix
 
 #Read Regulators
 path_regulators <- args[2]
+if(is.na(path)){
+  print("No path to regulators given")
+  quit(status = 1)
+}
 Regulators <- read.table(path_regulators, fileEncoding = "latin1", sep = "\n")
 Regulators <- Regulators[, 1]
 
+vim_path <- args[3]
+if(is.na(path)){
+  print("No path to folder for saving VIM given")
+  quit(status = 1)
+}
+
 #Implementation of GENIE3
 weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 16)
+print("Dimesnions of weight Matrix of Genie3: ")
+print(dim(weightMat))
 
 #matrix export
-export_path <- paste0(data_path, "/Weight_Matrix.csv")
+export_path <- paste0(vim_path, "/Weight_Matrix.csv")
 write.table(weightMat, export_path, sep = ',', row.names = FALSE, col.names = FALSE)
 cat(0)
 
