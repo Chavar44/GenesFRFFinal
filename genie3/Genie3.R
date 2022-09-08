@@ -37,7 +37,7 @@ if(is.na(path)){
 export_path <- paste0(vim_path, "Weight_Matrix.csv")
 print(export_path)
 
-if (1==1){
+if (!file.exists(export_path)){
   print("Reading Data")
   data <- read.table(path, fileEncoding = "latin1", sep = "\t")
 
