@@ -1,6 +1,6 @@
 import sys
 
-sys.path.insert(0,"/home/hpc/iwbn/iwbn001h/GenesFRFFinal")
+sys.path.insert(0,"/data_slow/xo53tota/GenesFRFFinal")
 
 
 from genie3.GENIE3 import *
