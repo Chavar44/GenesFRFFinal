@@ -29,6 +29,7 @@ if 1==1:
     start_genie3 = time.time()
     cmd = 'Rscript ' + config.path_to_genie3_R + " " + config.data_path + " "+ config.path_transcription_factors
     print(cmd)
+    os.system(cmd)
     #x = subprocess.check_output(cmd, universal_newlines=True)
     #logger.info('Terminated Genie3 with exit code ', x)
     logger.info('Terminated Genie3 with exit code 1')
