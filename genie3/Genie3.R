@@ -22,12 +22,14 @@ if(is.na(path)){
 }
 
 path_regulators <- args[2]
+print(path_regulators)
 if(is.na(path)){
   print("No path to regulators given")
   quit(status = 1)
 }
 
 vim_path <- args[3]
+print(path_regulators)
 if(is.na(path)){
   print("No path to folder for saving VIM given")
   quit(status = 1)

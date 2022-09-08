@@ -19,8 +19,6 @@ log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_fmt)
 logger = logging.getLogger(__name__)
 
-logger.info('Loading Dataset')
-data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
 
 #if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")):
 if 1==1:
@@ -34,6 +32,10 @@ if 1==1:
     #logger.info('Terminated Genie3 with exit code ', x)
     logger.info('Terminated Genie3 with exit code 1')
     end_genie3 = time.time()
+
+logger.info('Loading Dataset')
+data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
+
 
 if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.csv")):
     # run federated method
