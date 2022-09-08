@@ -32,6 +32,8 @@ if not os.path.exists(config.data_path_to_VIM_matrices + "Weight_Matrix.csv"):
     #logger.info('Terminated Genie3 with exit code ', x)
     logger.info('Terminated Genie3 with exit code 1')
     end_genie3 = time.time()
+else:
+    logger.info('Genie VIM matrix Found')
 
 logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
