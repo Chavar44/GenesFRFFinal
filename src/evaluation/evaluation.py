@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("~/GenesFRFFinal/src")
+sys.path.append("~/GenesFRFFinal")
 
 from genie3.GENIE3 import *
 #from ~/GenesFRFFinal/genie3/GENIE3 import *
