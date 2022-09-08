@@ -37,7 +37,7 @@ if(is.na(path)){
 export_path <- paste0(vim_path, "Weight_Matrix.csv")
 print(export_path)
 
-if (!file.exists(export_path)){
+if (file.exists(export_path)){
   data <- read.table(path, fileEncoding = "latin1", sep = "\t")
 
   #transpose matrix
@@ -64,7 +64,7 @@ if (!file.exists(export_path)){
 
 #Implementation of GENIE3
   print("Calculating Genie3")
-  weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 1,nTrees=500)
+  weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 12,nTrees=500)
   print("Dimesnions of weight Matrix of Genie3: ")
   print(dim(weightMat))
   # matrix export
