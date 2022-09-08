@@ -28,7 +28,7 @@ if(is.na(path)){
   quit(status = 1)
 }
 
-vim_path <- args[3]
+vim_path <- args[1]
 print(vim_path)
 if(is.na(path)){
   print("No path to folder for saving VIM given")
