@@ -23,6 +23,7 @@ logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
 
 #if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")):
+if 1==1:
     # run GENIE3
     logger.info('Run Genie3')
     start_genie3 = time.time()
