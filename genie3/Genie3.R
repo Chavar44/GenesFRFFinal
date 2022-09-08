@@ -64,7 +64,7 @@ if (!file.exists(export_path)){
 
 #Implementation of GENIE3
   print("Calculating Genie3")
-  weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 1)
+  weightMat <- GENIE3(data, regulators = Regulators, verbose=TRUE, nCores = 1,nTrees=500)
   print("Dimesnions of weight Matrix of Genie3: ")
   print(dim(weightMat))
   # matrix export
