@@ -37,7 +37,7 @@ if(is.na(path)){
 export_path <- paste0(vim_path, "Weight_Matrix.csv")
 print(export_path)
 
-if (!file.exists(export_path)){
+if (1==1)){
   print("Reading Data")
   data <- read.table(path, fileEncoding = "latin1", sep = "\t")
 
@@ -75,8 +75,10 @@ if (!file.exists(export_path)){
   weightMat <- read.table(export_path, sep = ',')
   print(dim(weightMat))
 }
-
+export_path <- paste0(vim_path, "Link_List500.csv")
 linkList <- getLinkList(weightMat)
+
+write.table(linkList, export_path, sep = ',', row.names = FALSE, col.names = FALSE)
 dim(linkList)
 head(linkList)
 
