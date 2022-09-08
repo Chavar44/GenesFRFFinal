@@ -1,0 +1,23 @@
+#!/bin/bash -l
+#
+# allocate 4 node (80 Cores) for 47 hours
+#PBS -l nodes=4:ppn=40,walltime=47:00:00
+#
+# job name 
+#PBS -N GenesFRF1
+#
+# first non-empty non-comment line ends PBS options
+
+#load required modules (compiler, ...)
+module load r/4.0.2-mro
+
+# jobs always start in $HOME - 
+# change to work directory
+cd  /home/hpc/iwbn/iwbn001h/GenesFRFFinal/genie3
+
+ 
+# run 
+Rscript Genie3.R /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/ /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/Regulators.txt /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/TCGA-COAD.htseq_fpkm.tsv
+
+
+
