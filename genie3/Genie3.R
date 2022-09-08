@@ -15,7 +15,7 @@ args <- commandArgs(TRUE)
 
 #Read File
 # path <- paste0(data_path, "/TCGA-COAD.htseq_fpkm.tsv")
-path <- args[1]
+path <- args[3]
 if(is.na(path)){
   print("No datapath given")
   quit(status = 1)
