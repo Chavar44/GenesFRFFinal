@@ -25,7 +25,7 @@ if 1==1:
     # run GENIE3
     logger.info('Run Genie3')
     start_genie3 = time.time()
-    cmd = 'Rscript ' + config.path_to_genie3_R + " " + config.data_path + " "+ config.path_transcription_factors
+    cmd = 'Rscript ' + config.path_to_genie3_R + " " + config.data_path_to_VIM_matrices + " "+ config.path_transcription_factors
     print(cmd)
     os.system(cmd)
     #x = subprocess.check_output(cmd, universal_newlines=True)
