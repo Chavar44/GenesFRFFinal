@@ -5,6 +5,7 @@ from src.python_implementation import config
 from sklearn.tree import BaseDecisionTree
 from sklearn.ensemble import RandomForestRegressor
 from operator import itemgetter
+import multiprocessing as mp
 
 
 def import_data(path, path_tf=None):
@@ -198,7 +199,7 @@ def train_local_rf(local_data, std_federated, gene_names=None, regulators='all')
     return feature_importance_matrix
 
 
-def train(data_hospitals, gene_names=None, regulators='all'):
+def train(data_hospitals, gene_names=None, regulators='all', parallelize_hospitals=1):
     """Trains each local hospital dataset and calculates the global model
 
     Parameters
@@ -214,11 +215,21 @@ def train(data_hospitals, gene_names=None, regulators='all'):
         List containing the names of the candidate regulators. When a list of regulators is provided, the names of all the genes must be provided (in gene_names). When regulators is set to 'all', any gene can be a candidate regulator.
         default: 'all'
 
+    parallelize_hospitals: int, optional
+        Number of processes the individual hospitals run on, must be between 1 and number of different hospitals
+
     Returns
     -------
         the Feature Importance of the global model
     """
     # TODO: check input!
+    if not isinstance(parallelize_hospitals, int):
+        raise ValueError(
+            'parallelize_hospitals must be an int and strictly positive')
+    if 1 > parallelize_hospitals > config.number_of_hospitals:
+        raise ValueError('parallelize_hospitals must strictly positive and should not be bigger than the number of '
+                         'hospitals')
+
     # train all local models
     local_feature_importances = []
 
@@ -226,16 +237,30 @@ def train(data_hospitals, gene_names=None, regulators='all'):
 
     std_federated = scaling_of_colums(data_hospitals, number_genes)
 
-    for index, data in enumerate(data_hospitals):
-        file_name = "VIM_H" + str(index + 1) + ".npy"
+    if parallelize_hospitals == 1:
+        for index, data in enumerate(data_hospitals):
+            file_name = "VIM_H" + str(index + 1) + ".npy"
+            path = config.data_path_to_VIM_matrices
+            if os.path.exists(os.path.join(path, file_name)):
+                print('loading file: ' + file_name)
+                local_feature_importances.append(np.load(os.path.join(path, file_name)))
+            else:
+                print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
+                local_feature_importances.append(train_local_rf(data, std_federated, gene_names, regulators))
+                np.save(os.path.join(path, file_name), local_feature_importances[index])
+    else:
+        print('running jobs on %d threads' % parallelize_hospitals)
+        input_data = list()
         path = config.data_path_to_VIM_matrices
-        if os.path.exists(os.path.join(path, file_name)):
-            print('loading file: ' + file_name)
-            local_feature_importances.append(np.load(os.path.join(path, file_name)))
-        else:
-            print("Hospital %d/%d..." % (index + 1, config.number_of_hospitals))
-            local_feature_importances.append(train_local_rf(data, std_federated, gene_names, regulators))
-            np.save(os.path.join(path, file_name), local_feature_importances[index])
+        for i in range(len(data_hospitals)):
+            input_data.append([data_hospitals[i], std_federated, gene_names, regulators, i, path])
+
+        pool = mp.Pool(parallelize_hospitals)
+
+        all_output = pool.map(wr_train_local_rf, input_data)
+
+        for (i, vim) in all_output:
+            local_feature_importances.append(vim)
 
     # Calculate the weight of the data of each Hospital
     VIM = np.zeros(local_feature_importances[0].shape)
@@ -248,6 +273,13 @@ def train(data_hospitals, gene_names=None, regulators='all'):
         for i in range(0, len(local_feature_importances)):
             VIM = VIM + (local_feature_importances[i] * config.split_uneven[i])
     return VIM
+
+
+def wr_train_local_rf(args):
+    file_name = "VIM_H" + str(args[4] + 1) + ".npy"
+    vim_res = train_local_rf(args[0], args[1], args[2], args[3])
+    np.save(os.path.join(args[5], file_name), vim_res)
+    return [args[4], vim_res]
 
 
 def get_linked_list_federated(VIM, printing):

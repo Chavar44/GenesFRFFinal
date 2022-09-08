@@ -18,16 +18,16 @@ data, gene_names, transcription_factors = import_data(config.data_path, config.p
 logger.info('Run Federated Approach')
 hospital_data = simulate_different_hospitals(data)
 start_federated = time.time()
-vim_federated = train(hospital_data)
+vim_federated = train(hospital_data, gene_names=gene_names, regulators=transcription_factors, parallelize_hospitals=config.number_of_hospitals)
 end_federated = time.time()
 
 # save VIM federated
 logger.info('saving VIM-matrix from federated approach')
-np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy"), vim_federated)
+np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy"), vim_federated, allow_pickle=False)
 
 # datetime object containing current date and time
 now = datetime.now()
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 f = open('times.txt', 'a')
-f.write("%s Time Genie3 takes: %s" % (dt_string, (end_federated - start_federated)))
+f.write("%s Time Federated Approach takes: %s" % (dt_string, (end_federated - start_federated)))
 f.close()
