@@ -4,7 +4,7 @@ library(GENIE3)
 #Following libraries are used for multi-core processing STILL DOESN'T WORK D:
 library(doParallel)
 library(foreach)
-library(plyr)
+
 library(doRNG)
 
 set.seed(123)   #For reproducibility purposes
