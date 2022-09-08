@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0,"/home/hpc/iwbn/iwbn001h/GenesFRFFinal")
-print(sys.path)
+
 
 from genie3.GENIE3 import *
 #from ~/GenesFRFFinal/genie3/GENIE3 import *
