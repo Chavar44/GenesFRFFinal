@@ -44,7 +44,7 @@ if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federa
     logger.info('Run Federated Approach')
     hospital_data = simulate_different_hospitals(data)
     start_federated = time.time()
-    vim_federated = train(hospital_data, gene_names=gene_names, regulators=transcription_factors)
+    vim_federated = train(hospital_data, gene_names=gene_names, regulators=transcription_factors,parallelize_hospitals=config.number_of_hospitals)
     end_federated = time.time()
     # save VIM federated
     logger.info('saving VIM-matrix from federated approach')
