@@ -7,7 +7,7 @@ path_transcription_factors = '/home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/Regulat
 path_to_genie3_R = '/home/hpc/iwbn/iwbn001h/GenesFRFFinal/genie3/Genie3.R'
 data_path_to_VIM_matrices = "/home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/"
 
-number_trees = 500
+number_trees = 1000
 tree_method = "RF"
 
 number_of_hospitals = 3
