@@ -20,8 +20,8 @@ logging.basicConfig(level=logging.INFO, format=log_fmt)
 logger = logging.getLogger(__name__)
 
 
-#if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")):
-if 1==1:
+if not os.path.exists(config.data_path_to_VIM_matrices + "Weight_Matrix.csv"):
+#if 1==1:
     # run GENIE3
     logger.info('Run Genie3')
     start_genie3 = time.time()
