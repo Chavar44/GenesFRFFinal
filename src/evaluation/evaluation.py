@@ -1,6 +1,7 @@
 import sys
+print(sys.path)
 sys.path.append("~/GenesFRFFinal/")
-
+print(sys.path)
 from genie3.GENIE3 import *
 #from ~/GenesFRFFinal/genie3/GENIE3 import *
 from src.python_implementation.main import *
