@@ -21,17 +21,7 @@ logger = logging.getLogger(__name__)
 logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
 
-#Load Genie3Matrix and calculate linked list
-logger.info('loading VIM matrix from Genie3')
-path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
-VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
-logger.info('loading VIM matrix from Genie3')
-file_name_link_list_genie3 = os.path.join(config.data_path_to_VIM_matrices, "LinkListG3.txt")
-edges_genie3 = get_linked_list_federated(VIM_genie3, gene_names=gene_names, regulators=transcription_factors,
-                                            max_count=config.max_count_link_list,
-                                            file_name=file_name_link_list_genie3, printing=False)
 
-del VIM_genie3
 
 # run or load federated approach
 if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")):
@@ -53,6 +43,32 @@ else:
     logger.info('loading VIM matrix from the federated approach')
     path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")
     vim_federated = np.load(path_vim_matrix_federated).astype(float)
+
+#Load Genie3Matrix
+logger.info('loading VIM matrix from Genie3')
+path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
+VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",")
+logger.info('loading VIM matrix from Genie3')
+
+#Calculate Genie3 LinkList
+VIM_genie3 = np.zeros(vim_federated.shape)
+vim_fed_sum = np.sum(vim_federated, axis=1)
+sum_reg = 0
+j = 0
+
+for i in range(0, len(vim_federated)):
+    if vim_fed_sum[i] != 0:
+        sum_reg += 1
+        VIM_genie3[i] = VIM_genie3_small[j]
+        j += 1
+
+
+file_name_link_list_genie3 = os.path.join(config.data_path_to_VIM_matrices, "LinkListG3.txt")
+edges_genie3 = get_linked_list_federated(VIM_genie3, gene_names=gene_names, regulators=transcription_factors,
+                                            max_count=config.max_count_link_list,
+                                            file_name=file_name_link_list_genie3, printing=False)
+
+del VIM_genie3
 
 # calculate link list from federated approach
 logger.info('Calculate linked list from federated approach')
