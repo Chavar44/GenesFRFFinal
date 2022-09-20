@@ -47,10 +47,12 @@ else:
 #Load Genie3Matrix
 logger.info('loading VIM matrix from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
-VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",")
-logger.info('loading VIM matrix from Genie3')
+path = "/data_slow/xo53tota/GenesFRF/All/Weight_Matrix.csv"
+VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
+
 
 #Calculate Genie3 LinkList
+logger.info('Calculate linked list from Genie3')
 VIM_genie3 = np.zeros(vim_federated.shape)
 vim_fed_sum = np.sum(vim_federated, axis=1)
 sum_reg = 0
