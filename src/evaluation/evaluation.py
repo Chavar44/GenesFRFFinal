@@ -24,13 +24,14 @@ data, gene_names, transcription_factors = import_data(config.data_path, config.p
 #Load Genie3Matrix and calculate linked list
 logger.info('loading VIM matrix from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
-VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",")
+VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
+logger.info('loading VIM matrix from Genie3')
 file_name_link_list_genie3 = os.path.join(config.data_path_to_VIM_matrices, "LinkListG3.txt")
 edges_genie3 = get_linked_list_federated(VIM_genie3, gene_names=gene_names, regulators=transcription_factors,
                                             max_count=config.max_count_link_list,
                                             file_name=file_name_link_list_genie3, printing=False)
 
-
+del VIM_genie3
 
 # run or load federated approach
 if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")):
