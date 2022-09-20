@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 #Load Genie3Matrix
 logger.info('loading VIM matrix from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
-VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
+VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",")
 
 logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
