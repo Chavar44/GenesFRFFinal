@@ -17,6 +17,11 @@ log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_fmt)
 logger = logging.getLogger(__name__)
 
+#Load Genie3Matrix
+logger.info('loading VIM matrix from Genie3')
+path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
+VIM_genie3 = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
+
 logger.info('Loading Dataset')
 data, gene_names, transcription_factors = import_data(config.data_path, config.path_transcription_factors)
 
@@ -100,6 +105,6 @@ plt.plot(x, recall, label='recall')
 plt.plot(x, f1, label='f1')
 plt.legend()
 plt.xlabel("Number of edges selected")
-file_name_png = 'precision_recall_f1_scores_' + config.number_of_hospitals + '_' + split_name + ".txt"
+file_name_png = 'precision_recall_f1_scores_' + str(config.number_of_hospitals) + '_' + split_name + ".txt"
 plt.savefig(os.path.join(config.path_to_results, file_name_png))
 plt.show()
