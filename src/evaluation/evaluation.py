@@ -47,7 +47,7 @@ split_name = 'uneven'
 if config.split_even:
     split_name = 'even'
 file_name_link_list_federated = os.path.join(config.data_path_to_VIM_matrices,
-                                             'link_list_' + config.number_of_hospitals + '_' + split_name + ".txt")
+                                             'link_list_' + str(config.number_of_hospitals) + '_' + split_name + ".txt")
 edges_federated = get_linked_list_federated(vim_federated, gene_names=gene_names, regulators=transcription_factors,
                                             max_count=config.max_count_link_list,
                                             file_name=file_name_link_list_federated, printing=False)
