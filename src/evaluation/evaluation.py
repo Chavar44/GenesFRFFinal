@@ -45,32 +45,18 @@ else:
     vim_federated = np.load(path_vim_matrix_federated).astype(float)
 
 #Load Genie3Matrix
-logger.info('loading VIM matrix from Genie3')
-path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
+#logger.info('loading VIM matrix from Genie3')
+#path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
 #path = "/data_slow/xo53tota/GenesFRF/All/Weight_Matrix.csv"
-VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
+#VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
 
 
 #Calculate Genie3 LinkList
-logger.info('Calculate linked list from Genie3')
-VIM_genie3 = np.zeros(vim_federated.shape)
-vim_fed_sum = np.sum(vim_federated, axis=1)
-sum_reg = 0
-j = 0
-
-for i in range(0, len(vim_federated)):
-    if vim_fed_sum[i] != 0:
-        sum_reg += 1
-        VIM_genie3[i] = VIM_genie3_small[j]
-        j += 1
-
-
-file_name_link_list_genie3 = os.path.join(config.data_path_to_VIM_matrices, "LinkListG3.txt")
-edges_genie3 = get_linked_list_federated(VIM_genie3, gene_names=gene_names, regulators=transcription_factors,
-                                            max_count=config.max_count_link_list,
-                                            file_name=file_name_link_list_genie3, printing=False)
-
-del VIM_genie3
+#logger.info('Calculate linked list from Genie3')
+#VIM_genie3 = np.zeros(vim_federated.shape)
+#vim_fed_sum = np.sum(vim_federated, axis=1)
+#sum_reg = 0
+#j = 0
 
 # calculate link list from federated approach
 logger.info('Calculate linked list from federated approach')
@@ -82,6 +68,8 @@ file_name_link_list_federated = os.path.join(config.data_path_to_VIM_matrices,
 edges_federated = get_linked_list_federated(vim_federated, gene_names=gene_names, regulators=transcription_factors,
                                             max_count=config.max_count_link_list,
                                             file_name=file_name_link_list_federated, printing=False)
+
+np.save(os.path.join(config.path_to_results, "VIM_Edges"), edges_federated)
 
 del data, gene_names, transcription_factors, vim_federated
 
