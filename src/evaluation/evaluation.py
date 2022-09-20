@@ -47,7 +47,7 @@ else:
 #Load Genie3Matrix
 logger.info('loading VIM matrix from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
-path = "/data_slow/xo53tota/GenesFRF/All/Weight_Matrix.csv"
+#path = "/data_slow/xo53tota/GenesFRF/All/Weight_Matrix.csv"
 VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
 
 
