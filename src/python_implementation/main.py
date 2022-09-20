@@ -282,10 +282,81 @@ def wr_train_local_rf(args):
     return [args[4], vim_res]
 
 
-def get_linked_list_federated(VIM, printing):
-    maxcount = 'all'
+def get_linked_list_federated(VIM, gene_names=None, regulators='all', max_count='all', file_name=None, printing=False):
+    """Gets the ranked list of (directed) regulatory links.
+
+    Parameters
+    ----------
+
+    VIM: numpy array
+        Array as returned by the function GENIE3(), in which the element (i,j) is the score of the edge directed from the i-th gene to the j-th gene.
+
+    gene_names: list of strings, optional
+        List of length p, where p is the number of rows/columns in VIM, containing the names of the genes. The i-th item of gene_names must correspond to the i-th row/column of VIM. When the gene names are not provided, the i-th gene is named Gi.
+        default: None
+
+    regulators: list of strings, optional
+        List containing the names of the candidate regulators. When a list of regulators is provided, the names of all the genes must be provided (in gene_names), and the returned list contains only edges directed from the candidate regulators. When regulators is set to 'all', any gene can be a candidate regulator.
+        default: 'all'
+
+    max_count: 'all' or positive integer, optional
+        Writes only the first maxcount regulatory links of the ranked list. When maxcount is set to 'all', all the regulatory links are written.
+        default: 'all'
+
+    file_name: string, optional
+        Writes the ranked list of regulatory links to the file file_name.
+        default: None
+
+    printing: bool, optional
+        Prints the ranked list to the standard output
+        default: False
+
+    Returns
+    -------
+
+    The list of regulatory links, ordered according to the edge score. Auto-regulations do not appear in the list. Regulatory links with a score equal to zero are randomly permuted. In the ranked list of edges, each line has format:
+
+        regulator   target gene     score of edge
+    """
+    # Check input arguments
+    if not isinstance(VIM, np.ndarray):
+        raise ValueError('VIM must be a square array')
+    elif VIM.shape[0] != VIM.shape[1]:
+        raise ValueError('VIM must be a square array')
+
     ngenes = VIM.shape[0]
-    input_idx = range(ngenes)
+
+    if gene_names is not None:
+        if not isinstance(gene_names, (list, tuple)):
+            raise ValueError('input argument gene_names must be a list of gene names')
+        elif len(gene_names) != ngenes:
+            raise ValueError(
+                'input argument gene_names must be a list of length p, where p is the number of columns/genes in the '
+                'expression data')
+
+    if regulators != 'all':
+        if not isinstance(regulators, (list, tuple)):
+            raise ValueError('input argument regulators must be a list of gene names')
+
+        if gene_names is None:
+            raise ValueError('the gene names must be specified (in input argument gene_names)')
+        else:
+            sIntersection = set(gene_names).intersection(set(regulators))
+            if not sIntersection:
+                raise ValueError('The genes must contain at least one candidate regulator')
+
+    if max_count != 'all' and not isinstance(max_count, int):
+        raise ValueError('input argument maxcount must be "all" or a positive integer')
+
+    if file_name is not None and not isinstance(file_name, str):
+        raise ValueError('input argument file_name must be a string')
+
+    # Get the indices of the candidate regulators
+    if regulators == 'all':
+        input_idx = range(ngenes)
+    else:
+        input_idx = [i for i, gene in enumerate(gene_names) if gene in regulators]
+
     vInter = [(i, j, score) for (i, j), score in np.ndenumerate(VIM) if i in input_idx and i != j]
 
     # Rank the list according to the weights of the edges
@@ -308,14 +379,38 @@ def get_linked_list_federated(VIM, printing):
         vInter_sort[i:] = items_perm
 
     # Write the ranked list of edges
-    nToWrite = nInter
-    if isinstance(maxcount, int) and maxcount >= 0 and maxcount < nInter:
-        nToWrite = maxcount
+    n_to_write = nInter
+    if isinstance(max_count, int) and 0 <= max_count < nInter:
+        n_to_write = max_count
+
+    if file_name:
+        outfile = open(file_name, 'w')
+        if gene_names is not None:
+            for i in range(n_to_write):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                outfile.write('%s\t%s\t%.6f\n' % (gene_names[TF_idx], gene_names[target_idx], score))
+        else:
+            for i in range(n_to_write):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                outfile.write('G%d\tG%d\t%.6f\n' % (TF_idx + 1, target_idx + 1, score))
+        outfile.close()
 
     if printing:
-        for i in range(nToWrite):
-            (TF_idx, target_idx, score) = vInter_sort[i]
-            TF_idx = int(TF_idx)
-            target_idx = int(target_idx)
-            print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
-    return vInter_sort
+        if gene_names is not None:
+            for i in range(n_to_write):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                print('%s\t%s\t%.6f' % (gene_names[TF_idx], gene_names[target_idx], score))
+        else:
+            for i in range(n_to_write):
+                (TF_idx, target_idx, score) = vInter_sort[i]
+                TF_idx = int(TF_idx)
+                target_idx = int(target_idx)
+                print('G%d\tG%d\t%.6f' % (TF_idx + 1, target_idx + 1, score))
+
+    return vInter_sort[:n_to_write]
