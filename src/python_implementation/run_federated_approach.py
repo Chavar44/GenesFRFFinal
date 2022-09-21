@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0,"/data_slow/xo53tota/GenesFRFFinal")
 from src.python_implementation.main import *
 import numpy as np
 import time
