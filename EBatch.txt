@@ -1,0 +1,12 @@
+#!/bin/bash -l
+
+#SBATCH --nodes=3
+#SBATCH --ntasks-per-node=4
+#SBATCH --time=47:00:00
+#SBATCH --export=NONE
+
+unset SLURM_EXPORT_ENV
+module load R
+
+cd  /home/hpc/iwbn/iwbn001h/GenesFRFFinal/genie3
+Rscript Genie3.R /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/ /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/Regulators.txt
