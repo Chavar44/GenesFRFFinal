@@ -76,14 +76,14 @@ if (!file.exists(export_path)){
   weightMat <- read.table(export_path, sep = ',')
   print(dim(weightMat))
 }
-export_path <- paste0(vim_path, "Link_List500.csv")
-linkList <- getLinkList(weightMat)
+#export_path <- paste0(vim_path, "Link_List500.csv")
+#linkList <- getLinkList(weightMat)
 
-write.table(linkList, export_path, sep = ',', row.names = FALSE, col.names = FALSE)
-dim(linkList)
-head(linkList)
+#write.table(linkList, export_path, sep = ',', row.names = FALSE, col.names = FALSE)
+#dim(linkList)
+#head(linkList)
 
-cat(0)
+#cat(0)
 
 
 
