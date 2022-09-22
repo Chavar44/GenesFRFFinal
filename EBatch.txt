@@ -3,7 +3,7 @@
 #SBATCH --job-name=Genie3
 #SBATCH --nodes=3
 #SBATCH --ntasks-per-node=4
-#SBATCH --time=25:00:00
+#SBATCH --time=24:00:00
 #SBATCH --export=NONE
 
 unset SLURM_EXPORT_ENV
