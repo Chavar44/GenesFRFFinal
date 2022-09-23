@@ -30,7 +30,7 @@ if config.split_even:
 
 logger.info('loading link list from Federated Approach')
 path = os.path.join(config.data_path_to_VIM_matrices, "link_list_3_even.txt")
-edges_federated = np.loadtxt(path, dtype=str, delimiter=" ")
+edges_federated = np.loadtxt(path, dtype=str, delimiter="\t")
 print(edges_federated)
 logger.info('loading link list from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "G3_linked_list_10000.txt")
