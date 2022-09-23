@@ -35,7 +35,7 @@ print(edges_federated)
 logger.info('loading link list from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "G3_linked_list_10000.txt")
 edges_genie3 = np.loadtxt(path, dtype=str, delimiter=" ")
-
+print(edges_genie3)
 
 logger.info('calculate precision, recall and f1 score')
 f1 = [0]
