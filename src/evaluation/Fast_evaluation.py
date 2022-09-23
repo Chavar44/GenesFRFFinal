@@ -31,11 +31,11 @@ if config.split_even:
 logger.info('loading link list from Federated Approach')
 path = os.path.join(config.data_path_to_VIM_matrices, "link_list_3_even.txt")
 edges_federated = np.loadtxt(path, dtype=str, delimiter="\t")
-print(edges_federated)
+
 logger.info('loading link list from Genie3')
 path = os.path.join(config.data_path_to_VIM_matrices, "G3_linked_list_10000.txt")
 edges_genie3 = np.loadtxt(path, dtype=str, delimiter=" ")
-print(edges_genie3)
+
 
 logger.info('calculate precision, recall and f1 score')
 f1 = [0]
@@ -43,9 +43,11 @@ precision = [0]
 recall = [0]
 
 num_total = min(len(edges_federated), len(edges_genie3))
-print(num_total)
+
 edges_federated = np.delete(np.asarray(edges_federated), obj=2, axis=1).tolist()
 edges_genie3 = np.delete(np.asarray(edges_genie3), obj=2, axis=1).tolist()
+
+print(edges_genie3)
 tp = 0
 tn = 0
 fp = 0
