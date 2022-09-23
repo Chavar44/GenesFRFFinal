@@ -43,6 +43,7 @@ precision = [0]
 recall = [0]
 
 num_total = min(len(edges_federated), len(edges_genie3))
+print(num_total)
 edges_federated = np.delete(np.asarray(edges_federated), obj=2, axis=1).tolist()
 edges_genie3 = np.delete(np.asarray(edges_genie3), obj=2, axis=1).tolist()
 tp = 0
