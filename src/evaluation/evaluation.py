@@ -34,7 +34,7 @@ if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federa
     end_federated = time.time()
     # save VIM federated
     logger.info('saving VIM-matrix from federated approach')
-    np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated_3_even.npy"), vim_federated)
+    np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy"), vim_federated)
     # save time taken
     f = open(os.path.join(config.path_to_results, 'times.txt'), 'w')
     f.write("Time the federated approach takes: %s\n" % (end_federated - start_federated))
@@ -42,7 +42,7 @@ if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federa
 else:
     # load federated vim matrix
     logger.info('loading VIM matrix from the federated approach')
-    path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")
+    path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated_3_even.npy")
     vim_federated = np.load(path_vim_matrix_federated).astype(float)
 
 # calculate link list from federated approach
