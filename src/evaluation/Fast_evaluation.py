@@ -47,13 +47,14 @@ num_total = min(len(edges_federated), len(edges_genie3))
 edges_federated = np.delete(np.asarray(edges_federated), obj=2, axis=1).tolist()
 edges_genie3 = np.delete(np.asarray(edges_genie3), obj=2, axis=1).tolist()
 
-print(edges_genie3)
+
 tp = 0
 tn = 0
 fp = 0
 fn = 0
 
 for i in range(0, num_total):
+    print("Federated: " + edges_federated[i] + "Genie3: " +  edges_genie3[i] )
     if edges_federated[i] == edges_genie3[i]:
         tp += 1
     else:
