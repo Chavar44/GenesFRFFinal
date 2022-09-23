@@ -19,7 +19,7 @@ import src.python_implementation.config as config
 import os
 from numpy import unravel_index
 
-max_count_link_list = 500000
+max_count_link_list = 1000000
 
 
 
@@ -57,7 +57,7 @@ path = config.data_path_to_VIM_matrices + "Weight_Matrix.npy"
 G3 = np.load(path).astype(float)
 print("Finished reading G3 Matrix")
 
-with open('G3_linked_list_500000.txt', 'w') as f:
+with open('G3_linked_list_1000000.txt', 'w') as f:
     
     for i in range(0,max_count_link_list):
         coords = unravel_index(G3.argmax(), G3.shape) #get coordinates for the VIM Matrix in order to know the exact gene
