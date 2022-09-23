@@ -25,7 +25,7 @@ data, gene_names, transcription_factors = import_data(config.data_path, config.p
 
 
 # run or load federated approach
-if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")):
+if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated_3_even.npy")):
     # run federated method
     logger.info('Run Federated Approach')
     hospital_data = simulate_different_hospitals(data)
@@ -34,7 +34,7 @@ if not os.path.exists(os.path.join(config.data_path_to_VIM_matrices, "VIM_federa
     end_federated = time.time()
     # save VIM federated
     logger.info('saving VIM-matrix from federated approach')
-    np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy"), vim_federated)
+    np.save(os.path.join(config.data_path_to_VIM_matrices, "VIM_federated_3_even.npy"), vim_federated)
     # save time taken
     f = open(os.path.join(config.path_to_results, 'times.txt'), 'w')
     f.write("Time the federated approach takes: %s\n" % (end_federated - start_federated))
@@ -44,20 +44,6 @@ else:
     logger.info('loading VIM matrix from the federated approach')
     path_vim_matrix_federated = os.path.join(config.data_path_to_VIM_matrices, "VIM_federated.npy")
     vim_federated = np.load(path_vim_matrix_federated).astype(float)
-
-#Load Genie3Matrix
-#logger.info('loading VIM matrix from Genie3')
-#path = os.path.join(config.data_path_to_VIM_matrices, "Weight_Matrix.csv")
-#path = "/data_slow/xo53tota/GenesFRF/All/Weight_Matrix.csv"
-#VIM_genie3_small = np.loadtxt(path, dtype=str, delimiter=",").astype(float)
-
-
-#Calculate Genie3 LinkList
-#logger.info('Calculate linked list from Genie3')
-#VIM_genie3 = np.zeros(vim_federated.shape)
-#vim_fed_sum = np.sum(vim_federated, axis=1)
-#sum_reg = 0
-#j = 0
 
 # calculate link list from federated approach
 logger.info('Calculate linked list from federated approach')
