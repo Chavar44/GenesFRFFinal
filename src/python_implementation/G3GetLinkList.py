@@ -9,14 +9,14 @@ sys.path.insert(0,"/data_slow/xo53tota/GenesFRFFinal")
 from genie3.GENIE3 import *
 #from ~/GenesFRFFinal/genie3/GENIE3 import *
 from src.python_implementation.main import *
-from sklearn.metrics import mean_squared_error
+
 import numpy as np
-from matplotlib import pyplot as plt
+
 import time
 import logging
-import subprocess
+
 import src.python_implementation.config as config
-import os
+
 from numpy import unravel_index
 
 max_count_link_list = 1500000
