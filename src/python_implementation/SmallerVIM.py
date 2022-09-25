@@ -48,6 +48,7 @@ for ir, row in enumerate(gene_names):
     for j in tf:
         if row == j:
             print(j)
+            print(BigVIM[ir])
             SmallVIM[t] = BigVIM[ir]
             t = t+1
 
