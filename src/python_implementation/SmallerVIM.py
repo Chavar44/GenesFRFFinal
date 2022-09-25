@@ -44,11 +44,11 @@ print("Gene names read")
 
 
 t=0
-for i in gene_names:
+for ir, row in enumerate(gene_names):
     for j in tf:
-        if i == j:
+        if row == j:
             print(j)
-            SmallVIM[t]=BigVIM[i]
+            SmallVIM[t] = BigVIM[ir]
             t = t+1
 
 print("Conversion finished")
