@@ -47,7 +47,7 @@ t=0
 for i in gene_names:
     for j in tf:
         if i == j:
-            print(tf[j])
+            print(j)
             SmallVIM[t]=BigVIM[i]
             t = t+1
 
