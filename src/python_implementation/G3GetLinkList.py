@@ -53,11 +53,11 @@ print("Regulators in order")
 
 
 #import G3 VIM matrix
-path = config.data_path_to_VIM_matrices + "Weight_Matrix.npy"
+path = config.data_path_to_VIM_matrices + "FVIM_small_even_3.npy"
 G3 = np.load(path).astype(float)
-print("Finished reading G3 Matrix")
+print("Finished reading F Matrix")
 
-with open('G3_linked_list_1500000.txt', 'w') as f:
+with open('F_even_3_linked_list_1500000.txt', 'w') as f:
     
     for i in range(0,max_count_link_list):
         coords = unravel_index(G3.argmax(), G3.shape) #get coordinates for the VIM Matrix in order to know the exact gene
