@@ -54,6 +54,7 @@ fp = 0
 fn = 0
 
 for i in range(0, num_total):
+    print(str(i) + " out of " + num_total + " edges")
     #print("Federated: " + edges_federated[i] + "Genie3: " +  edges_genie3[i] )
     if edges_federated[i] == edges_genie3[i]:
         tp += 1
