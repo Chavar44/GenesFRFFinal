@@ -54,10 +54,6 @@ fp = 0
 fn = 0
 
 for i in range(0, num_total):
-    print("Federated")
-    print(edges_federated[i])
-    print("Genie3")
-    print(edges_genie3[i])
     #print("Federated: " + edges_federated[i] + "Genie3: " +  edges_genie3[i] )
     if edges_federated[i] == edges_genie3[i]:
         tp += 1
