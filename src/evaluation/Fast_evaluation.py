@@ -76,6 +76,7 @@ for i in range(0, num_total):
 
     precision.append(tp / (tp + fp))
     recall.append(tp / (tp + fn))
+
     if precision[i] + recall[i] != 0:
         f1.append(2 * (precision[i] * recall[i]) / (precision[i] + recall[i]))
     else:
