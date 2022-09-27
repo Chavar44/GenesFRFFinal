@@ -61,14 +61,14 @@ for i in range(0, num_total):
     else:
         if edges_federated[i] in edges_genie3[:i + 1]:
             tp += 1
-            fn -= 1
         else:
             fp += 1
-        if edges_genie3[i] not in edges_federated[:i + 1]:
-            fn += 1
-        else:
+        if edges_genie3[i] in edges_federated[:i + 1]:
             tp += 1
+            fn -= 1
             fp -= 1
+        else:
+            fn += 1
     tn = num_total - (tp + fn + fp)
     precision.append(tp / (tp + fp))
     recall.append(tp / (tp + fn))
