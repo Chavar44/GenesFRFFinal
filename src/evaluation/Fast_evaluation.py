@@ -70,6 +70,8 @@ for i in range(0, num_total):
         else:
             fn += 1
     tn = num_total - (tp + fn + fp)
+    print(fp)
+    print(fn)
     precision.append(tp / (tp + fp))
     recall.append(tp / (tp + fn))
     if precision[i] + recall[i] != 0:
