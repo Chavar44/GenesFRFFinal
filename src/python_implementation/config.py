@@ -18,4 +18,4 @@ split_uneven = [0.1, 0.2, 0.7]
 
 max_count_link_list = 50000
 #density = Edges_analysed/(Genes*regulators)
-density = max_count_link_list/(60484*1637)
+density = (max_count_link_list/(60484*1637)) * 100
