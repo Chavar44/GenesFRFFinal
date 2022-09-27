@@ -85,6 +85,6 @@ plt.legend()
 plt.grid()
 plt.xlabel("Number of edges selected")
 plt.title("Density(%) = " + "%.4f" % config.density)
-file_name_png = 'eval_' + str(config.number_of_hospitals) + '_' + split_name + '_' + config.max_count_link_list + ".png"
+file_name_png = 'eval_' + str(config.number_of_hospitals) + '_' + split_name + '_' + str(config.max_count_link_list) + ".png"
 plt.savefig(os.path.join(config.path_to_results, file_name_png))
 plt.show()
