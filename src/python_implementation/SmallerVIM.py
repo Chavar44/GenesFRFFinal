@@ -18,7 +18,7 @@ import src.python_implementation.config as config
 import os
 from numpy import unravel_index
 
-path = config.data_path_to_VIM_matrices + "VIM_H1.npy"
+path = config.data_path_to_VIM_matrices + "VIM_H2.npy"
 BigVIM = np.load(path).astype(float)
 print("Finished reading Big VIM federated Matrix")
 SmallVIM = np.zeros((1637, 60483))
@@ -54,7 +54,7 @@ for ir, row in enumerate(gene_names):
 
 print("Conversion finished")
 
-path = config.data_path_to_VIM_matrices + "SVIM_H1.npy"
+path = config.data_path_to_VIM_matrices + "SVIM_H2.npy"
 
 np.save(path, SmallVIM, allow_pickle=False)
 
