@@ -12,10 +12,10 @@ number_trees = 500
 tree_method = "RF"
 
 number_of_hospitals = 3
-split_even = False
+split_even = True
 # is the list of how to split uneven data: len must be of number_of_hospitals
 split_uneven = [0.1, 0.2, 0.7]
 
-max_count_link_list = 10000
+max_count_link_list = 100000
 #density = Edges_analysed/(Genes*regulators)
 density = max_count_link_list/(60484*1637)

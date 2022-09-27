@@ -42,7 +42,7 @@ f1 = [0]
 precision = [0]
 recall = [0]
 
-num_total = min(len(edges_federated), len(edges_genie3))
+num_total = config.max_count_link_list
 
 edges_federated = np.delete(np.asarray(edges_federated), obj=2, axis=1).tolist()
 edges_genie3 = np.delete(np.asarray(edges_genie3), obj=2, axis=1).tolist()
@@ -83,7 +83,7 @@ plt.plot(x, recall, label='recall')
 plt.plot(x, f1, label='f1')
 plt.legend()
 plt.xlabel("Number of edges selected")
-plt.ylabel("Density = " + "%.6f" % config.density)
+plt.title("Density = " + "%.6f" % config.density)
 file_name_png = 'precision_recall_f1_scores_' + str(config.number_of_hospitals) + '_' + split_name + ".png"
 plt.savefig(os.path.join(config.path_to_results, file_name_png))
 plt.show()
