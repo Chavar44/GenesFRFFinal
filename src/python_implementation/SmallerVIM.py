@@ -18,7 +18,7 @@ import src.python_implementation.config as config
 import os
 from numpy import unravel_index
 
-path = config.data_path_to_VIM_matrices + "VIM_H2.npy"
+path = config.data_path_to_VIM_matrices + "VIM_H3.npy"
 BigVIM = np.load(path).astype(float)
 print("Finished reading Big VIM federated Matrix")
 SmallVIM = np.zeros((1637, 60483))
@@ -47,14 +47,12 @@ t=0
 for ir, row in enumerate(gene_names):
     for j in tf:
         if row == j:
-            print(j)
-            print(BigVIM[ir])
             SmallVIM[t] = BigVIM[ir]
             t = t+1
 
 print("Conversion finished")
 
-path = config.data_path_to_VIM_matrices + "SVIM_H2.npy"
+path = config.data_path_to_VIM_matrices + "SVIM_H3.npy"
 
 np.save(path, SmallVIM, allow_pickle=False)
 
