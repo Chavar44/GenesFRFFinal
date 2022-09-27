@@ -84,7 +84,7 @@ plt.plot(x, f1, label='f1')
 plt.legend()
 plt.grid()
 plt.xlabel("Number of edges selected")
-plt.title("Density = " + "%.6f" % config.density)
+plt.title("Density(%) = " + "%.4f" % config.density*100)
 plt.figure(figsize=(10, 10))
 file_name_png = 'precision_recall_f1_scores_' + str(config.number_of_hospitals) + '_' + split_name + ".png"
 plt.savefig(os.path.join(config.path_to_results, file_name_png))
