@@ -12,7 +12,7 @@ number_trees = 500
 tree_method = "RF"
 
 number_of_hospitals = 10
-split_even = True
+split_even = False
 # is the list of how to split uneven data: len must be of number_of_hospitals
 split_uneven = [0.1, 0.2, 0.7]
 #For reminder purposes split_uneven = [0.1, 0.2, 0.7]
