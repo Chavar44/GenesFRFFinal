@@ -20,7 +20,7 @@ data, gene_names, transcription_factors = import_data(config.data_path, config.p
 logger.info('Run Federated Approach')
 hospital_data = simulate_different_hospitals(data)
 start_federated = time.time()
-vim_federated = train(hospital_data, gene_names=gene_names, regulators=transcription_factors, parallelize_hospitals=1)
+vim_federated = train(hospital_data, gene_names=gene_names, regulators=transcription_factors, parallelize_hospitals=config.number_of_hospitals)
 end_federated = time.time()
 
 # save VIM federated
