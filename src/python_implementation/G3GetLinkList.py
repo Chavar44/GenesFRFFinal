@@ -53,7 +53,7 @@ print("Regulators in order")
 
 
 #import G3 VIM matrix
-path = config.data_path_to_VIM_matrices + "Weight_Matrix.npy"
+path = config.data_path_to_VIM_matrices + "G3_Coding_Genes_WM.npy"
 G3 = np.load(path).astype(float)
 print("Finished reading F Matrix")
 
