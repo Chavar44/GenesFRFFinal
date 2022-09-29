@@ -240,7 +240,7 @@ def train(data_hospitals, gene_names=None, regulators='all', parallelize_hospita
     if parallelize_hospitals == 1:
         for index, data in enumerate(data_hospitals):
             file_name = "VIM_H" + str(index + 1) + ".npy"
-            path = config.data_path_to_VIM_matrices
+            path = config.path_to_results
             if os.path.exists(os.path.join(path, file_name)):
                 print('loading file: ' + file_name)
                 local_feature_importances.append(np.load(os.path.join(path, file_name)))
