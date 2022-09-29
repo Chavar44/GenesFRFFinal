@@ -10,4 +10,4 @@ unset SLURM_EXPORT_ENV
 module load r
 
 cd  /home/hpc/iwbn/iwbn001h/GenesFRFFinal/genie3
-Rscript Genie3.R /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/ /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/Regulators.txt /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data//TCGA-COAD.htseq_fpkm.tsv
+Rscript Genie3.R /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/ /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/Regulators.txt /home/hpc/iwbn/iwbn001h/GenesFRFFinal/data/NewDataset.tsv
