@@ -20,6 +20,6 @@ split_uneven = [0.1, 0.2, 0.7]
 
 max_count_link_list = 1000000
 
-#19567 coding genes in dataset
+#19574 coding genes in dataset
 #density = Edges_analysed/(Genes*regulators)
-density = (max_count_link_list/(60484*1637)) * 100
+density = (max_count_link_list/(19574*1637)) * 100
