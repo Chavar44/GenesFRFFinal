@@ -68,7 +68,7 @@ with open(path, 'w') as f:
 
         print(str(i) + " " + line)
         print(coords[0])
-        print(coords[0])
+        print(coords[1])
         G3[coords[0]][coords[1]] = 0
     
 f.close()
