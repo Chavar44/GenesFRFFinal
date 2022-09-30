@@ -18,10 +18,10 @@ import src.python_implementation.config as config
 import os
 from numpy import unravel_index
 
-path = config.data_path_to_VIM_matrices + "VIM_H3.npy"
+path = config.data_path_to_VIM_matrices + "VIM_federated.npy"
 BigVIM = np.load(path).astype(float)
 print("Finished reading Big VIM federated Matrix")
-SmallVIM = np.zeros((1637, 60483))
+SmallVIM = np.zeros((1637, 19573))
 
 #import regulator names
 path_tf=config.path_transcription_factors
