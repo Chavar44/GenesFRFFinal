@@ -9,7 +9,7 @@ sys.path.insert(0,"/data_slow/xo53tota/GenesFRFFinal")
 from genie3.GENIE3 import *
 #from ~/GenesFRFFinal/genie3/GENIE3 import *
 from src.python_implementation.main import *
-import time
+
 import numpy as np
 
 import time
@@ -55,11 +55,9 @@ print("Regulators in order")
 #import G3 VIM matrix
 path = config.data_path_to_VIM_matrices + "VIM_Federated_10_even.npy"
 G3 = np.load(path).astype(float)
-print(G3.shape)
-print(G3[19][19573])
-print(len(gene_names))
+
 print("Finished reading F Matrix")
-time.sleep(40)
+
 path = config.data_path_to_VIM_matrices + "Federated_10_even_linked_list_5000000.txt"
 with open(path, 'w') as f:
     
