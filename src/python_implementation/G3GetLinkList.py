@@ -56,7 +56,7 @@ print("Regulators in order")
 path = config.data_path_to_VIM_matrices + "VIM_Federated_3_even.npy"
 G3 = np.load(path).astype(float)
 print("Finished reading F Matrix")
-s
+
 path = config.data_path_to_VIM_matrices + "Federated_3_even_linked_list_5000000.txt"
 with open(path, 'w') as f:
     
