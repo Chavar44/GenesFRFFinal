@@ -81,10 +81,10 @@ for i in range(0, num_total):
         f1.append(0)
 
 x = np.arange(0, num_total + 1)
-plt.plot(x, precision, label='precision')
-plt.plot(x, recall, label='recall')
+plt.plot(x, precision, label='Precision')
+plt.plot(x, recall, label='Recall')
 plt.plot(x, f1, label='f1')
-plt.plot(x, jaccard, label='jaccard')
+plt.plot(x, jaccard, label='Jaccard index')
 plt.legend()
 plt.grid()
 plt.xlabel("Number of edges selected")
