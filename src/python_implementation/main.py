@@ -18,7 +18,7 @@ def import_data(path, path_tf=None):
     :return data: numpy array with data, gene_names(optional), transcription factors(optional)
     """
     if path_tf is not None:
-        data = np.loadtxt(path, dtype=str)
+        data = np.loadtxt(path, dtype=str,skiprows=1)
         raw_gene_names = data[:, :1]
         # Transform raw_gene_names into a list readable by the federated random forest approach
         gene_names = []

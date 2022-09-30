@@ -31,7 +31,7 @@ print("Regulators read")
 
 #import TCGA data and read gene_names
 path = config.data_path
-data = np.loadtxt(path, dtype=str, skiprows=0)
+data = np.loadtxt(path, dtype=str, skiprows=1)
 raw_gene_names = data[:, :1]
 # Transform raw_gene_names into a list readable by the federated random forest approach
 gene_names = []
