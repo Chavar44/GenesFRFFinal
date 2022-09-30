@@ -52,7 +52,7 @@ for ir, row in enumerate(gene_names):
 
 print("Conversion finished")
 
-path = config.data_path_to_VIM_matrices + "SVIM_H3.npy"
+path = config.data_path_to_VIM_matrices + "VIM_Federated_3_even.npy"
 
 np.save(path, SmallVIM, allow_pickle=False)
 
