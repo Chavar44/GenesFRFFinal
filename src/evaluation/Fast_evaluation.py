@@ -29,11 +29,11 @@ if config.split_even:
     split_name = 'even'
 
 logger.info('loading link list from Federated Approach')
-path = os.path.join(config.data_path_to_VIM_matrices, "F_uneven_3_linked_list_1100000.txt")
+path = os.path.join(config.data_path_to_VIM_matrices, "Federated_3_uneven_linked_list_5000000.txt")
 edges_federated = np.loadtxt(path, dtype=str, delimiter=" ")
 
 logger.info('loading link list from Genie3')
-path = os.path.join(config.data_path_to_VIM_matrices, "G3_linked_list_1500000.txt")
+path = os.path.join(config.data_path_to_VIM_matrices, "G3_linked_list_5000000.txt")
 edges_genie3 = np.loadtxt(path, dtype=str, delimiter=" ")
 
 
