@@ -56,7 +56,7 @@ print("Regulators in order")
 path = config.data_path_to_VIM_matrices + "VIM_Federated_10_even.npy"
 G3 = np.load(path).astype(float)
 print(G3.shape)
-print(G3[19][19574])
+print(G3[19][19573])
 print(len(gene_names))
 print("Finished reading F Matrix")
 time.sleep(40)
