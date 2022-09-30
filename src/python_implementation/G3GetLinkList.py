@@ -65,8 +65,10 @@ with open(path, 'w') as f:
         line =  Regulators[coords[0]]  + " " + gene_names[coords[1]] + " " + str(G3[coords[0]][coords[1]])
         f.write(line)
         f.write('\n')
-        print(coords[0] + " " + coords[1])
+
         print(str(i) + " " + line)
+        print(coords[0])
+        print(coords[0])
         G3[coords[0]][coords[1]] = 0
     
 f.close()
