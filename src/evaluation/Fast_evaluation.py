@@ -41,6 +41,7 @@ logger.info('calculate precision, recall and f1 score')
 f1 = [0]
 precision = [0]
 recall = [0]
+jaccard =[0]
 
 num_total = config.max_count_link_list
 
@@ -70,13 +71,10 @@ for i in range(0, num_total):
         else:
             fn += 1
     tn = num_total - (tp + fn + fp)
-    print("tp = " + str(tp))
-    print("fp = " + str(fp))
-    print("fn = " + str(fn))
 
     precision.append(tp / (tp + fp))
     recall.append(tp / (tp + fn))
-
+    jaccard.append(tp / (tp + fn + fp))
     if precision[i] + recall[i] != 0:
         f1.append(2 * (precision[i] * recall[i]) / (precision[i] + recall[i]))
     else:
