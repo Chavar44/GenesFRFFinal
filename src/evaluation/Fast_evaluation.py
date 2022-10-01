@@ -37,7 +37,7 @@ path = os.path.join(config.data_path_to_VIM_matrices, "G3_linked_list_5000000.tx
 edges_genie3 = np.loadtxt(path, dtype=str, delimiter=" ")
 
 
-logger.info('calculate precision, recall and f1 score')
+logger.info('Calculate precision, recall and f1 score')
 f1 = [0]
 precision = [0]
 recall = [0]
