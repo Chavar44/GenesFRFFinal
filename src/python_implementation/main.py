@@ -58,8 +58,9 @@ def simulate_different_hospitals(data):
             else:
                 start = len(data) * config.split_uneven[i - 1]
             data_hospitals.append(data[int(start):int(end)])
-        if "NaN" in data_hospitals:
-            print("NaN value detected")
+        for i in data_hospitals:
+            if i =="NaN":
+                print("NaN value detected")
     return data_hospitals
 
 
