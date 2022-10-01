@@ -18,9 +18,10 @@ split_uneven = [0.1, 0.2, 0.7]
 #For reminder purposes split_uneven = [0.1, 0.075, 0.075, 0.225, 0.125, 0.075, 0.075, 0.1, 0.075, 0.075]
 #For reminder purposes split_uneven = [0.1, 0.2, 0.7]
 
+max_count_link_list = 1602132 #5% density
+density = (max_count_link_list/(19574*1637)) * 100
 
-max_count_link_list = 100000
+
 
 #19574 coding genes in dataset
 #density = Edges_analysed/(Genes*regulators)
-density = (max_count_link_list/(19574*1637)) * 100
