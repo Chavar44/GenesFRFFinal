@@ -49,16 +49,16 @@ def simulate_different_hospitals(data):
         num_pat_per_hospital = num_pat / config.number_of_hospitals
         for i in range(config.number_of_hospitals):
             data_hospitals.append(data[int(num_pat_per_hospital * i): int(num_pat_per_hospital * (i + 1))])
-    else:
-        assert len(config.split_uneven) == config.number_of_hospitals
-        for i in range(config.number_of_hospitals):
-            end = len(data) * config.split_uneven[i]
-            if i == 0:
-                start = 0
-            else:
-                start = len(data) * config.split_uneven[i - 1]
-            data_hospitals.append(data[int(start):int(end)])
-    return data_hospitals
+        else:
+            assert len(config.split_uneven) == config.number_of_hospitals
+            end = 0
+            for i in range(config.number_of_hospitals):
+                start = end
+                if i == (config.number_of_hospitals - 1):
+                    end = num_pat
+                else:
+                    end = int(len(data) * config.split_uneven[i] + start)
+                data_hospitals.append(data[start:end])
 
 
 def calculate_mean_local(data):
