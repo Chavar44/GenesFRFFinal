@@ -259,8 +259,10 @@ def train(data_hospitals, gene_names=None, regulators='all', parallelize_hospita
 
         all_output = pool.map(wr_train_local_rf, input_data)
 
+        # make vim's in correct order
+        local_feature_importances = [None] * len(data_hospitals)
         for (i, vim) in all_output:
-            local_feature_importances.append(vim)
+            local_feature_importances[i] = vim
 
     # Calculate the weight of the data of each Hospital
     VIM = np.zeros(local_feature_importances[0].shape)
